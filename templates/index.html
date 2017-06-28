@@ -1,8 +1,8 @@
 {% extends "base/base.html" %}
 
 {% block mainbody %}
-<div class="container">
-    <div class="row" id="chart" style="height: 600px">
+<div class="container bg-info" >
+    <div class="row" id="chart" style="height: 400px">
 
     </div>
 </div>
@@ -11,29 +11,82 @@
 {% block footer %}
 
 <script>
-    var myChart = echarts.init(document.getElementById('chart'));
 
-        // 指定图表的配置项和数据
-        var option = {
-            title: {
-                text: 'ECharts 入门示例'
-            },
-            tooltip: {},
-            legend: {
-                data:['销量']
-            },
-            xAxis: {
-                data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"]
-            },
-            yAxis: {},
-            series: [{
-                name: '销量',
-                type: 'bar',
-                data: [5, 20, 36, 10, 10, 20]
-            }]
-        };
+    let data = [];
+    let now = +new Date();
+    let period = 1*1000;
+    data.push([+now,Math.random()*100+60 ]);
 
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
+    for(let i =0;i<=120;i++){
+        data.push(getRandomData())
+    }
+
+    function getRandomData() {
+        let old_v = data[data.length-1][1];
+        let old_t = data[data.length-1][0];
+        let new_v = old_v*0.6 + (Math.random()*100+60)*0.4;
+
+        return [+old_t+period,new_v]
+    }
+
+
+
+    let myChart = echarts.init(document.getElementById('chart'));
+
+    // 指定图表的配置项和数据
+    let option = {
+        title: {
+            text: 'ECharts',
+            show:false
+        },
+        tooltip: {
+            axisPointer: {
+                animation: false
+            }
+        },
+        legend: {
+            data:['销量'],
+            show:false
+        },
+        xAxis: {
+            type: 'time',
+            splitLine: {
+                show: false
+            }
+        },
+        yAxis: {
+            type: 'value',
+            splitLine: {
+                show: false
+            }
+        },
+        series: [{
+            name: '销量',
+            type: 'line',
+            data: data,
+            smooth: true,
+            symbol:'none',
+            hoverAnimation: false,
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+
+    let iv = setInterval(function () {
+        if (data.length > 10){
+            data.shift()
+        }
+        data.push(getRandomData());
+        myChart.setOption({
+        series: [{
+            data: data
+        }]
+    });
+    },1000);
+
+    function close() {
+        clearInterval(iv)
+    }
 </script>
 {% endblock %}
