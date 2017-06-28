@@ -1,0 +1,143 @@
+{% extends "base/base.html" %}
+
+{% block mainbody %}
+{% csrf_token %}
+    <section class="container" id="vueApp">
+        <div class="row">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span>Operating area</span>
+                    <div class="pull-right">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{% url "spider:add" %}" class="btn btn-success"><i class="icon-plus"></i>New Project</a>
+                            <button type="button" class="btn btn-info" v-on:click="ws_conn"><i class="icon-spinner"></i>Connect</button>
+                            <button type="button" class="btn btn-info" v-on:click="ws_close"><i class="icon-warning-sign"></i>Close</button>
+                            <button type="button" class="btn btn-success" v-on:click="crawl"><i class="icon-play"></i>Crawl</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="SelectProject">Select Project</label>
+                            <select id="SelectProject" class="form-control" v-model="project_id">
+                                {% for project in project_list %}
+                                    <option value="{{ project.id }}" data-columns="{{ project.columns }}">{{ project.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <span>Result List</span>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-9">
+                        <table class="table table-bordered table-striped">
+                            <caption>Item:</caption>
+                            <thead>
+                            <tr>
+                                <th v-for="col in columns">${ col }</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="item in items">
+                                <td v-for="col in columns">${ item[col] }</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="">Urls:</label>
+                        <ul class="list-group">
+                            <li class="list-group-item" v-for="url in urls">
+                                <span class="icon-arrow-right"></span>
+                                <span>url</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+{% block footer %}
+    <script>
+
+        let app = new Vue({
+            el:"#vueApp",
+            data:{
+                project_id:"",
+                project_selectable:true,
+                columns:['name','content'],
+                items:[],
+                urls:[
+                    "baidu",
+                    "douban"
+                ]
+            },
+            watch:{
+                project_id:function () {
+                    let cols =  $("#SelectProject").find("option:selected").data("columns");
+                    this.columns = cols.split(",")
+                }
+            },
+            methods:{
+                crawl:function () {
+                    let that = this;
+                    $.post({
+                        url:"{% url "spider:crawl" %}",
+                        data:{
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                            project_id:that.project_id
+                        },
+                        success:function (res) {
+                            console.log("success");
+
+                        },
+                        error:function (res) {
+                            console.log("error")
+                        }
+                    })
+                },
+                ws_conn:function () {
+                    let that = this;
+                    if(window.ws){
+                        window.ws.close()
+                    }
+                    let ws = new WebSocket("ws://" + window.location.host + "/spider/echo");
+                    ws.onopen = function () {
+                        console.log("WebSocket Connected")
+                    };
+                    ws.onmessage=function (msg) {
+                        console.log(msg.data);
+                        let jl = JSON.parse(msg.data);
+                        that.$data.items.push(jl.data);
+{#                        var jl = JSON.parse(msg.data);#}
+{#                        if (that.items.length >=5){#}
+{#                            that.items.shift()#}
+{#                        }#}
+{#                        that.items.push(jl)#}
+                    };
+                    ws.onclose=function (p1) {
+                        console.log("WebSocket Closed")
+                    };
+                    ws.onerror = function (p1) {
+                        console.log("SomeThing error...")
+                    };
+                    window.ws = ws
+                },
+                ws_close:function () {
+                    if(window.ws){
+                        window.ws.close()
+                    }
+                },
+            }
+        });
+    </script>
+{% endblock %}

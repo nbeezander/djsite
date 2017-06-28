@@ -1,0 +1,57 @@
+{% extends "base/base.html" %}
+
+{% block mainbody %}
+    <div class="container">
+        <div class="row">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Main info</div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="form-inline">
+                            <label>Id:</label>
+                            <span>{{ project.id }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-inline">
+                            <label>Name:</label>
+                            <span>{{ project.name }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">Rules</div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-striped table-responsive">
+                        <thead>
+                        <tr>
+                            <th>Column</th>
+                            <th>Rule</th>
+                            <th>Method</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for rule in project.rules_set.all %}
+                            <tr>
+                                <td>{{ rule.column }}</td>
+                                <td>{{ rule.rule }}</td>
+                                <td>{{ rule.method }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footer %}
+<script>
+
+</script>
+{% endblock %}

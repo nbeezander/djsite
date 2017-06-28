@@ -1,0 +1,227 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+    <header xmlns:v-on="http://www.w3.org/1999/xhtml">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">菜鸟教程</a>
+                </div>
+                <div>
+                    <ul class="nav navbar-nav">
+            <li class="active"><a href="#">iOS</a></li>
+            <li><a href="#">SVN</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    Java
+                    <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">jmeter</a></li>
+                    <li><a href="#">EJB</a></li>
+                    <li><a href="#">Jasper Report</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">分离的链接</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">另一个分离的链接</a></li>
+                </ul>
+            </li>
+        </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <form action="{% url 'parse:handle' %}" method="post" id="controlForm">
+    {% csrf_token %}
+    <section class="container">
+        <div class="row bg-info row-padding">
+            <div class="col-md-1 col-md-offset-11">
+                <i id="mp" class="icon-minus-sign-alt icon-2x text-danger" data-toggle="collapse" data-target="#opt"></i>
+            </div>
+        </div>
+
+        <div class="row bg-info collapse in" id="opt">
+            <div class="col-md-4">
+            <div class="form-inline">
+                <label for="">选择：</label>
+                <input id="" name="m_code" type="text" class="form-control" title=""/>
+            </div>
+        </div>
+            <div class="col-md-4">
+            <div class="form-inline">
+                <label for=""></label>
+                <input id="" name="m_name" type="text" class="form-control" title=""/>
+            </div>
+        </div>
+            <div class="col-md-4">
+                <div class="form-inline">
+                    <label for="">Method:</label>
+                    <select id="method" class="form-control">
+                        {% for m in method %}
+                            <option>{{ m }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button type="button" class="btn btn-success" v-on:click="ws_conn">连接Ws</button>
+                <button type="button" class="btn btn-success" v-on:click="ws_close">关闭Ws</button>
+                <button type="submit">提交</button>
+            </div>
+            <div class="col-md-12">
+                <div class="form-row">
+                    <label for="User-Agent">User-Agent:</label>
+                    <input id="User-Agent" name="user_agent" type="text" class="form-control" title="" value="Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36"/>
+                </div>
+            </div>
+        </div>
+
+
+
+    </section>
+
+
+    <section class="container" id="mv2">
+        <div class="row">
+            <div class="col-md-1 col-md-offset-11">
+                <i id="mp_main" class="icon-plus-sign-alt icon-2x text-danger" data-toggle="collapse" data-target="#main_opt"></i>
+            </div>
+        </div>
+        <div class="row collapse " id="main_opt">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-offset-3">
+                        <button type="button" v-on:click="add_col" class="btn btn-success"><i class="icon-plus"></i>添加</button>
+                        <button type="button" v-on:click="del_col" class="btn btn-danger"><i class="icon-plus"></i>添加</button>
+                    </div>
+                </div>
+                <div class="row" v-for="item in columns">
+                    <div class="col-md-4">
+                        <input title="名称" type="text" class="label-input" v-model="item.title"/>
+                    </div>
+                    <div class="col-md-1">
+                        <span>:</span>
+                    </div>
+                    <div class="col-md-7">
+                        <input title="标签" type="text" class="form-control" v-model="item.tab">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-8">
+                <div>
+                    <textarea title="ini pager" readonly class="form-control" rows="20"  style="resize: none"><input /></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" id="v_data">
+       <div class="row">
+           <div class="col-md-8">
+               <table class="table table-bordered  table-striped">
+{#           <caption>{% verbatim %}{{ message }}{% endverbatim %}</caption>#}
+           <caption>${ message }</caption>
+           <thead class="bg-primary">
+           <tr>
+               <th v-for="th in itemsHeader">${ th }</th>
+           </tr>
+           </thead>
+           <tbody>
+           <tr v-for="item in items">
+               <td>${ item.name }</td>
+               <td>${ item.title }</td>
+               <td>${ item.url }</td>
+           </tr>
+           </tbody>
+       </table>
+           </div>
+           <div class="col-md-4">
+                <ol>
+                    <li v-for="todo in todos">
+                        ${ todo.text }
+                    </li>
+                </ol>
+           </div>
+       </div>
+    </section>
+    </form>
+{% endblock %}
+{% block footer %}
+    <script>
+        $(function () {
+            $("#mp").on('click',function () {
+                $(this).toggleClass("icon-minus-sign-alt");
+                $(this).toggleClass("icon-plus-sign-alt");
+            });
+            $("#mp_main").on('click',function () {
+                $(this).toggleClass("icon-minus-sign-alt");
+                $(this).toggleClass("icon-plus-sign-alt");
+            });
+        });
+
+        Vue.options.delimiters = ["${", "}"];
+        var mv = new Vue({
+            el:"#controlForm",
+            data : {
+                message:"hello vue",
+                seen:false,
+                todos: [
+                    { text: '学习 JavaScript' },
+                    { text: '学习 Vue' },
+                    { text: '整个牛项目' }
+                    ],
+                columns:[
+                    { title: "1", tab:"1"},
+                    { title: "2", tab:"2"}
+                    ],
+                items:[
+                    { name:"1",title:"2",url:"3"}
+                ],
+                itemsHeader:[
+                    "name","title","url"
+                ]
+            },
+            methods:{
+                add_col:function () {
+                    this.columns.push({title:"",tab:""})
+                },
+                del_col:function () {
+                    this.columns.pop()
+                },
+                ws_conn:function () {
+                    var that = this;
+                    if(window.ws){
+                        window.ws.close()
+                    }
+                    var ws = new WebSocket("ws://" + window.location.host + "/parse/echo");
+                    ws.onopen = function () {
+                        console.log("WebSocket Connected")
+                    };
+                    ws.onmessage=function (msg) {
+                        console.log(msg.data);
+                        var jl = JSON.parse(msg.data);
+                        if (that.items.length >=5){
+                            that.items.shift()
+                        }
+                        that.items.push(jl)
+                    };
+                    ws.onclose=function (p1) {
+                        console.log("WebSocket Closed")
+                    };
+                    ws.onerror = function (p1) {
+                        console.log("SomeThing error...")
+                    };
+                    window.ws = ws
+                },
+                ws_close:function () {
+                    if(window.ws){
+                        window.ws.close()
+                    }
+                }
+            }
+
+        });
+
+    </script>
+{% endblock %}

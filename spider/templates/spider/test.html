@@ -1,0 +1,100 @@
+{% extends "base/base.html" %}
+
+{% block mainbody %}
+    <div class="container" id="vueApp">
+    {% csrf_token %}
+        <div class="row">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Main info
+                    <div class="pull-right">
+                        <button type="button" v-on:click="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="">网址</label>
+                                <input id="" name="" type="text" class="form-control" title="" v-model="url"/>
+                            </div>
+                        </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Rule</label>
+                            <input id="" name="" type="text" class="form-control" title="" v-model="rule"/>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Method</label>
+                            <select v-model="method" class="form-control">
+                                <option v-for="m in methods">${ m }</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    Response
+                </div>
+                <div class="panel-body">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label for="">Html</label>
+                            <pre style="max-height: 600px;overflow-y: scroll;min-height: 200px">${ response }</pre>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="">Extract</label>
+                            <pre style="min-height: 200px;overflow-y: scroll">${ extract }</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block footer %}
+ <script>
+    let mv = new Vue({
+        el:"#vueApp",
+        data:{
+            url:"https://movie.douban.com/",
+            rule:"div.nav a::text",
+            method:"css",
+            methods:['css','xpath'],
+            response:"",
+            extract:""
+        },
+        methods:{
+            submit:function () {
+                let that = this;
+                $.post({
+                    url:"{% url 'spider:test' %}",
+                    data:{
+                        url:that.url,
+                        rule:that.rule,
+                        method:that.method,
+                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                    },
+                    success:function (response) {
+                        let j = JSON.parse(response);
+                        that.response = j['text'];
+                        that.extract = j['extract']
+                    },
+                    error:function () {
+                        console.log("error")
+                    }
+                })
+            }
+        }
+
+    })
+
+ </script>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+
+.no-border{
+    border: none;
+}
+.label-input{
+    border: none;
+    border-bottom: 1px solid #ccc;
+    width: 100%;
+    padding: 6px 4px;
+    outline: none;
+}
+
+.row{
+    padding: 10px 0;
+}
+
+.custom-background{
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-image: url("/static/imgs/bg.png");
+}
+.input-danger{
+    border-color: #f56954 !important;
+    box-shadow: none;
+}
+i [class^="icon-"]{
+    width: 16px;
+}

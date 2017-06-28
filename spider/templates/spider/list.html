@@ -1,0 +1,32 @@
+{% extends "base/base.html" %}
+
+{% block mainbody %}
+    <div class="container">
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">Project List</div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-responsive table-striped">
+                        <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>Opt</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for project in project_list %}
+                            <tr>
+                                <td>{{ project.id }}</td>
+                                <td>{{ project.name }}</td>
+                                <td><a href="{% url "spider:detail" project.id %}"><i class="icon-book"></i></a></td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

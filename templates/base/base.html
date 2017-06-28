@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title|default:_("Something is changing")  }}</title>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static "frame/bootstrap-3.3.7-dist/css/bootstrap.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "frame/Font-Awesome-3.2.1/css/font-awesome.min.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
+    <link rel="icon" href="{% static "imgs/favicon.ico" %}">
+</head>
+<body class="custom-background">
+{% block header %}
+{% include "base/header.html" %}
+{% endblock %}
+
+{% block mainbody %}
+
+{% endblock %}
+
+{% load static %}
+<script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
+<script src="{% static "frame/bootstrap-3.3.7-dist/js/bootstrap.js" %}"></script>
+<script src="{% static "js/vue.min.js" %}"></script>
+<script src="{% static "js/vee-validate.js" %}"></script>
+<script>
+    Vue.options.delimiters  = ["${","}"]
+    Vue.use(VeeValidate)
+</script>
+{% block footer %}{% endblock %}
+</body>
+</html>

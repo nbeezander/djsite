@@ -1,0 +1,234 @@
+{% extends "base/base.html" %}
+
+{% block mainbody %}
+    <div class="container">
+        <div class="row">
+            <h2>新增项目{{ method }}</h2>
+        </div>
+        <form id="controlForm" method="post" action="{% url 'spider:add' %}">
+            {% csrf_token %}
+            <div class="row">
+                <button type="submit">提交</button>
+                <button type="button" v-on:click="submit">ajax</button>
+                <button type="button" v-on:click="validateBeforeSubmit">validateBeforeSubmit</button>
+            </div>
+
+            <div class="row">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <span>Main Info</span>
+                        <div class="pull-right btn-group btn-group-sm">
+                            <button type="button" class="btn btn-success"><i class="icon-check"></i>Validate</button>
+                            <button type="button" class="btn btn-success"><i class="icon-save"></i>Submit</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Name:</label>
+                                <input id="" name="name" v-vi:requried  type="text" v-validate="'required'" :class="{'form-control': true, 'input-danger': errors.has('name') }" v-model="project.name" title="" :placeholder="errors.first('name')"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" for="">Allowed domains:</label>
+                                <input id="" name="allowedDomains"  type="text" v-validate="'required'" :class="{'form-control': true, 'input-danger': errors.has('allowedDomains') }" v-model="project.allowed_domains" title="allowedDomains" :placeholder="errors.first('allowedDomains')"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Allow URL:</label>
+                                <input id="" name="allowUrl"  type="text" v-validate="'required'" :class="{'form-control': true, 'input-danger': errors.has('allowUrl') }" v-model="project.allow_url" title="allowUrl" :placeholder="errors.first('allowUrl')"/>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Allow URL:</label>
+                                <input type="text" class="form-control" v-model="project.columns">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        Start URLs
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <table class="table table-bordered  table-striped">
+                                <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>删除？</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(url,index) in urls">
+                                    <td>
+                                        <input id="" :name="url_header+index"  type="text" v-validate="'required'" :class="{'form-control': true, 'input-danger': errors.has('url0') }" v-model="url.link" title="url" :placeholder="errors.first('url')"/>
+{#                                        <input type="text" name="project_url" class="form-control" v-model="url.link"/>#}
+                                    </td>
+                                    <td>
+                                        <a href="javascript:;" v-on:click="del_url(index)"><i class="icon-minus text-danger"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <a href="javascript:;" v-on:click="add_url"><i class="icon-plus"></i>新增一行</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        Item Rules
+                    </div>
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <table class="table table-bordered  table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Column</th>
+                                    <th>Rule</th>
+                                    <th>Method</th>
+                                    <th>Extract</th>
+                                    <th>Del?</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(rule,index) in rules">
+                                    <td><input type="text" name="project_url" class="form-control" v-model="rule.column"/></td>
+                                    <td><input type="text" name="project_url" class="form-control" v-model="rule.rule"/></td>
+                                    <td>
+                                        <select class="form-control" v-model="rule.method">
+                                            <option value="css">css</option>
+                                            <option value="xpath">xpath</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" v-model="rule.extract">
+                                            <option value="extract">extract</option>
+                                            <option value="extract_first">extract_first</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="javascript:;" v-on:click="del_rule(index)"><i class="icon-minus text-danger"></i></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">
+                                        <a href="javascript:;" v-on:click="add_rule"><i class="icon-plus"></i>新增一行</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block footer %}
+<script>
+    Vue.directive('vi',{
+        bind:function (el,bindling,vnode) {
+            console.log(bindling)
+            console.log(vnode.context)
+{#            vnode.add_rule()#}
+        }
+    });
+
+    var mv = new Vue({
+        el:"#controlForm",
+        data:{
+            urls:[
+                {link:""}
+            ],
+            rules:[
+                {column:"",rule:"",method:"xpath",extract:"extract_first"}
+            ],
+            project:{
+                name:"",
+                allow_url:"",
+                allowed_domains:"",
+                columns:"",
+                next_pager:""
+            },
+            parse_method:['css','xpath'],
+            url_header:"url"
+
+        },
+        methods:{
+            add_url:function () {
+                this.urls.push({link:""})
+            },
+            del_url:function (index) {
+                if (this.urls.length >1){
+                    this.urls.splice(index,1)
+                }
+            },
+            add_rule:function () {
+                this.rules.push({column:"",rule:"",method:"css",extract:"extract_first"})
+            },
+            del_rule:function (index) {
+                if (this.rules.length >1){
+                    this.rules.splice(index,1)
+                }
+            },
+            submit:function () {
+                var that = this;
+                var data = {
+                    project:that.project,
+                    csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                };
+                that.urls.forEach(function (item,index) {
+                    data["urls["+index+"]"] = item
+                });
+                that.rules.forEach(function (item,index) {
+                    data["rules["+index+"]"] = item
+                });
+                console.log(data)
+                $.post({
+                    url:"{% url 'spider:add' %}",
+                    data:data,
+                    success:function (res) {
+                        console.log("success")
+                    },
+                    error:function (rep) {
+                        console.log("Something error")
+                    }
+                })
+            },
+            validateBeforeSubmit() {
+                this.$validator.validateAll().then(() => {
+                    // eslint-disable-next-line
+                    alert('From Submitted!');
+                }).catch(() => {
+                    // eslint-disable-next-line
+                    alert('Correct them errors!');
+                });
+            }
+        },
+        watch:{
+            rules:function () {
+                let str = "";
+                let that = this;
+                that.rules.forEach(function (item) {
+                    str += item.column
+                })
+                console.log(str)
+            }
+        }
+    })
+</script>
+{% endblock %}
+
