@@ -8,14 +8,14 @@
                 <button class="btn btn-info" data-toggle="modal" data-target="#newTodo">
 	                New
                 </button>
-                <div class="modal fade" id="newTodo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal fade" id="newTodo" tabindex="-1" role="dialog" aria-labelledby="newTodoLabel" aria-hidden="true">
 	                <div class="modal-dialog">
 		                <div class="modal-content">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                                     &times;
                                 </button>
-                                <h4 class="modal-title" id="myModalLabel">
+                                <h4 class="modal-title" id="newTodoLabel">
                                     New
                                 </h4>
                             </div>
@@ -51,7 +51,7 @@
             </div>
             <div class="col-md-11 col-md-offset-1 time-line" v-for="todo in todos">
                 <div class="todo-icon">
-                    <input type="checkbox" class="hidden"  v-model="todo.state"/>
+                    <input title="" type="checkbox" class="hidden"  v-model="todo.state"/>
                     <a href="javascript:;" style="text-decoration:none;">
                         <i class="icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state, 'icon-circle-blank' : !todo.state}"> </i>
                     </a>
@@ -60,20 +60,31 @@
                     <div class="panel-heading">
                         <div class="form-inline">
                             <span>${ todo.inTime }</span>
-                            <input type="text"  class="form-control hidden" v-model="todo.content" title="">
-                            <span class="todo-header">${ todo.content }</span>
-                            <a href="javascript:;" class="todo-check hidden"><i class="icon-ok"></i></a>
-                            <a href="javascript:;" class=""><i class="icon-pencil todo-edit"></i></a>
+                            <a href="javascript::" class="" title="Remarks" data-container="body" data-toggle="popover" data-placement="bottom" :data-content="todo.remarks">
+                                Remarks
+                            </a>
                         </div>
 
                     </div>
                     <div class="panel-body">
-                        sss
+                        <div class="form-inline">
+                            <input type="text"  class="form-control hidden" v-model="todo.content" title="">
+                            <span class="todo-header" style="font-size: 1.5em">${ todo.content }</span>
+                            <a href="javascript:;" class="todo-check hidden"><i class="icon-ok"></i></a>
+                            <a href="javascript:;" class=""><i class="icon-pencil todo-edit"></i></a>
+                        </div>
+                        <div>
+                            <ul class="list-group">
+                                <li class="list-group-item" v-for="todo in todos">${ todo.content }</li>
+                                <li class="list-group-item">new
+
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-11 col-md-offset-1 time-line" style="min-height: 70px">
-
             </div>
         </div>
     </section>
@@ -114,16 +125,17 @@
         });
         $("#vueApp").on("click",".todo-icon a",function () {
             $(this).parent().find(":checkbox").click()
-        })
+        });
+        $("[data-toggle='popover']").popover();
     });
 
     let app = new Vue({
         el:"#vueApp",
         data:{
             todos:[
-                {inTime:"2017/6/29",content:"Add todo list",level:1,state:true},
-                {inTime:"2017/6/29",content:"Add todo list",level:2,state:true},
-                {inTime:"2017/6/29",content:"Add todo list",level:3,state:false},
+                {inTime:"2017/6/29",content:"Add todo list",remarks:"this is the test text",level:1,state:true},
+                {inTime:"2017/6/29",content:"Add todo list",remarks:"this is the test text",level:2,state:true},
+                {inTime:"2017/6/29",content:"Add todo list",remarks:"this is the test text",level:3,state:false},
             ],
             todo:{
                 inTime:"",
