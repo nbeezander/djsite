@@ -28,3 +28,14 @@
 i [class^="icon-"]{
     width: 16px;
 }
+
+.time-line{
+    border-left: 1px dotted #b9bdbe;
+}
+.todo-icon{
+    position: relative;
+    top: 5px;
+    left: -27px;
+    float: left;
+    background: white
+}
