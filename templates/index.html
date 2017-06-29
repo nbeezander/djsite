@@ -1,1 +1,131 @@
 {% extends "base/base.html" %}
+
+{% block mainbody %}
+
+    <section class="container" style="background: white" id="vueApp">
+        <div class="row">
+            <div class="col-md-11 col-md-offset-1 time-line" style="min-height: 50px">
+                <button class="btn btn-info" data-toggle="modal" data-target="#newTodo">
+	                New
+                </button>
+                <div class="modal fade" id="newTodo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	                <div class="modal-dialog">
+		                <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    New
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label for="" class="col-md-2 control-label">Content :</label>
+                                        <div class="col-md-10">
+                                            <input type="text" class="form-control" v-model="todo.content">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="" class="col-md-2 control-label">Level :</label>
+                                        <div class="col-md-2">
+                                            <select class="form-control" v-model="todo.level">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="icon-reply"></i>Close</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" v-on:click="new_todo" >
+                                    <i class="icon-ok">Ok</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-11 col-md-offset-1 time-line" v-for="todo in todos">
+                <div class="todo-icon">
+                    <i class=" icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state, 'icon-circle-blank' : !todo.state}"> </i>
+                </div>
+                <div class="panel" :class="{'panel-danger':todo.level==1,'panel-warning':todo.level==2,'panel-info':todo.level==3}">
+                    <div class="panel-heading">
+                        <div class="form-inline">
+                            <span>${ todo.inTime }</span>
+                            <input type="text"  class="form-control hidden" v-model="todo.content" title="">
+                            <span class="todo-header">${ todo.content }</span>
+                            <a href="javascript:;" class="todo-check hidden"><i class="icon-ok"></i></a>
+                            <a href="javascript:;" class=""><i class="icon-pencil todo-edit"></i></a>
+                        </div>
+
+                    </div>
+                    <div class="panel-body">
+                        sss
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-11 col-md-offset-1 time-line" style="min-height: 70px">
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+<script>
+    $(function () {
+        $("a").find("i.todo-edit").on('click',function () {
+            console.log("ss");
+            let par = $(this).parent().parent();
+            par.find("input").removeClass("hidden");
+            par.find(".todo-check").removeClass("hidden");
+            par.find(".todo-header").addClass("hidden");
+        });
+        $("a").find("i.icon-ok").on('click',function () {
+            let par = $(this).parent().parent();
+            par.find("input").addClass("hidden");
+            par.find(".todo-check").addClass("hidden");
+            par.find(".todo-header").removeClass("hidden");
+        })
+    });
+
+    let app = new Vue({
+        el:"#vueApp",
+        data:{
+            todos:[
+                {inTime:"2017/6/29",content:"Add todo list",level:1,state:true},
+                {inTime:"2017/6/29",content:"Add todo list",level:2,state:true},
+                {inTime:"2017/6/29",content:"Add todo list",level:3,state:false},
+            ],
+            todo:{
+                inTime:"",
+                content:"",
+                level:3,
+                state:false
+            }
+        },
+        methods:{
+            new_todo:function () {
+                this.todo.inTime = new Date();
+                this.todos.unshift(this.todo);
+                this.todo = {
+                    inTime:"",
+                    content:"",
+                    level:3,
+                    state:false
+                }
+            }
+        },
+        watch:{
+            
+        }
+    })
+
+</script>
+
+{% endblock %}
