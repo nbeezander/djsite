@@ -52,7 +52,7 @@
             <div class="col-md-11 col-md-offset-1 time-line" v-for="todo in todos">
                 <div class="todo-icon">
                     <input title="" type="checkbox" class="hidden"  v-model="todo.state"/>
-                    <a href="javascript:;" style="text-decoration:none;">
+                    <a href="javascript:" style="text-decoration:none;">
                         <i class="icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state, 'icon-circle-blank' : !todo.state}"> </i>
                     </a>
                 </div>
@@ -60,7 +60,7 @@
                     <div class="panel-heading">
                         <div class="form-inline">
                             <span>${ todo.inTime }</span>
-                            <a href="javascript::" class="" title="Remarks" data-container="body" data-toggle="popover" data-placement="bottom" :data-content="todo.remarks">
+                            <a href="javascript:" class="" title="Remarks" data-container="body" data-toggle="popover" data-placement="bottom" :data-content="todo.remarks">
                                 Remarks
                             </a>
                         </div>
@@ -70,14 +70,14 @@
                         <div class="form-inline">
                             <input type="text"  class="form-control hidden" v-model="todo.content" title="">
                             <span class="todo-header" style="font-size: 1.5em">${ todo.content }</span>
-                            <a href="javascript:;" class="todo-check hidden"><i class="icon-ok"></i></a>
-                            <a href="javascript:;" class=""><i class="icon-pencil todo-edit"></i></a>
+                            <a href="javascript:" class="todo-check hidden"><i class="icon-ok"></i></a>
+                            <a href="javascript:" class=""><i class="icon-pencil todo-edit"></i></a>
                         </div>
                         <div>
                             <ul class="list-group">
                                 <li class="list-group-item" v-for="todo in todos">${ todo.content }</li>
-                                <li class="list-group-item">new
-
+                                <li class="list-group-item">
+                                    <a href="javascript:"><i class="icon-plus"></i>add detail</a>
                                 </li>
                             </ul>
                         </div>
@@ -92,6 +92,22 @@
 
 {% block footer %}
 <script>
+    let fabric = require('fabric').fabric;
+
+    let  a = [
+        {% for todo in todo_list %}
+            {
+                content:"{{ todo.content}}",
+                child:[
+                {% for foo in todo.child_set.all %}
+                    {
+                        content:"{{ foo.content }}"
+                    },
+                {% endfor %}
+                ]
+            },
+        {% endfor %}
+    ];
     $(function () {
         $("a").find("i.todo-edit").on('click',function () {
             console.log("ss");
@@ -107,7 +123,7 @@
             par.find(".todo-header").removeClass("hidden");
         });
         $("body").keyup(function () {
-            if (event.which == 13 && !app.todo.content==""){
+            if (event.which === 13 && !app.todo.content===""){
 
                 $("#todoSubmit").click()
             }
@@ -154,6 +170,10 @@
                     level:3,
                     state:false
                 }
+            },
+            save_todo:function (index) {
+
+
             }
         },
         watch:{

@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # 管理静态文件的框架
     'polls',  # 添加自定义应用
     'parse',
-    'spider'
+    'spider',
+    'todo'
     # 'channels'
 ]
 
