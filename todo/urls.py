@@ -6,5 +6,5 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-
+    url(r'^ajax_add$', views.ajax_add, name='ajax_add')
 ]

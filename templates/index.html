@@ -1,11 +1,12 @@
 {% extends "base/base.html" %}
 
 {% block mainbody %}
-
+    {% csrf_token %}
     <section class="container" style="background: white" id="vueApp">
         <div class="row">
-            <div class="col-md-11 col-md-offset-1 time-line" style="min-height: 50px">
-                <button class="btn btn-info" data-toggle="modal" data-target="#newTodo">
+            <div class="col-md-11 col-md-offset-1 time-line" style="min-height: 80px">
+                <div class="col-md-3">
+                    <button class="btn btn-info" data-toggle="modal" data-target="#newTodo">
 	                New
                 </button>
                 <div class="modal fade" id="newTodo" tabindex="-1" role="dialog" aria-labelledby="newTodoLabel" aria-hidden="true">
@@ -47,6 +48,30 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-inline">
+                    <label class="control-label">状态:</label>
+                    <select v-model="search.state" class="form-control">
+                        <option value=""></option>
+                        <option value="true">进行中</option>
+                        <option value="false">已完成</option>
+                    </select>
+                </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-inline">
+                    <label for="" class="control-label">Level:</label>
+                    <select class="form-control" v-model="search.level">
+                        <option></option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                    </select>
+                </div>
                 </div>
             </div>
             <div class="col-md-11 col-md-offset-1 time-line" v-for="todo in todos">
@@ -92,7 +117,7 @@
 
 {% block footer %}
 <script>
-    let fabric = require('fabric').fabric;
+{#    let fabric = require('fabric').fabric;#}
 
     let  a = [
         {% for todo in todo_list %}
@@ -158,18 +183,39 @@
                 content:"",
                 level:3,
                 state:false
+            },
+            search:{
+                inTime:"",
+                level:"",
+                state:""
             }
         },
         methods:{
             new_todo:function () {
-                this.todo.inTime = new Date();
-                this.todos.unshift(this.todo);
-                this.todo = {
-                    inTime:"",
-                    content:"",
-                    level:3,
-                    state:false
-                }
+                let that = this;
+                $.post({
+                    url:"{% url "todo:ajax_add" %}" ,
+                    data:{
+                        todo:{
+                            content:that.todo.content,
+                            level:that.todo.level
+                        },
+                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                    },
+                    success:function (rep) {
+                        that.todo.inTime = new Date();
+                        that.todos.unshift(this.todo);
+                        that.todo = {
+                            inTime:"",
+                            content:"",
+                            level:3,
+                            state:false
+                        }
+                    },
+                    error:function (rep) {
+
+                    }
+                });
             },
             save_todo:function (index) {
 

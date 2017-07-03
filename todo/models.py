@@ -5,7 +5,7 @@ from django.db import models
 
 class Todo(models.Model):
     content = models.CharField(verbose_name="Content", max_length=255)
-    in_time = models.DateTimeField(verbose_name="In Time", auto_created=True)
+    in_time = models.DateTimeField(verbose_name="In Time", auto_created=True,auto_now_add=True)
     edit_time = models.DateTimeField(verbose_name="Edit Time", auto_now=True)
     level = models.SmallIntegerField(verbose_name="Level", default=3)
     state = models.BooleanField(verbose_name="State", default=False)

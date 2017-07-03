@@ -17,6 +17,7 @@ class RequestBeautyMiddleWare(MiddlewareMixin):
     def process_request(self, request):
         t_data_name= []
         if request.method == 'POST':
+            print("POST DATA:")
             for item in request.POST:
                 print(item,request.POST[item])
                 if dictRe.findall(item):
@@ -50,7 +51,6 @@ class RequestBeautyMiddleWare(MiddlewareMixin):
                     del request.session[item]
 
                 del request.session["t_session"]
-                print("!!!!!!!!!!!========!!!!!!!!")
         except Exception as e:
             pass
         return response
