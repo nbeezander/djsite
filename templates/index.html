@@ -78,7 +78,7 @@
                 <div class="todo-icon">
                     <input title="" type="checkbox" class="hidden"  v-model="todo.state"/>
                     <a href="javascript:" style="text-decoration:none;">
-                        <i class="icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state, 'icon-circle-blank' : !todo.state}"> </i>
+                        <i class="icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state=='true', 'icon-circle-blank' : todo.state=='false'}"> </i>
                     </a>
                 </div>
                 <div class="panel" :class="{'panel-danger':todo.level==1,'panel-warning':todo.level==2,'panel-info':todo.level==3}">
@@ -100,7 +100,7 @@
                         </div>
                         <div>
                             <ul class="list-group">
-                                <li class="list-group-item" v-for="todo in todos">${ todo.content }</li>
+                                <li class="list-group-item" v-for="child in todo.child">${ child.content }</li>
                                 <li class="list-group-item">
                                     <a href="javascript:"><i class="icon-plus"></i>add detail</a>
                                 </li>
@@ -119,10 +119,14 @@
 <script>
 {#    let fabric = require('fabric').fabric;#}
 
-    let  a = [
+    let  pagerData = [
         {% for todo in todo_list %}
             {
+                inTime:"{{ todo.in_time|date:"Y/m/d H:i" }}",
                 content:"{{ todo.content}}",
+                level:"{{ todo.level }}",
+                state:"{{ todo.state|lower }}",
+                remarks:"{{ todo.remarks }}",
                 child:[
                 {% for foo in todo.child_set.all %}
                     {
@@ -155,14 +159,7 @@
         });
         $("#todoSubmit").on('click',function () {
 
-                app.todo.inTime = new Date();
-                app.todos.unshift(app.todo);
-                app.todo = {
-                    inTime:"",
-                    content:"",
-                    level:3,
-                    state:false
-                }
+
         });
         $("#vueApp").on("click",".todo-icon a",function () {
             $(this).parent().find(":checkbox").click()
@@ -173,16 +170,12 @@
     let app = new Vue({
         el:"#vueApp",
         data:{
-            todos:[
-                {inTime:"2017/6/29",content:"Add todo list",remarks:"this is the test text",level:1,state:true},
-                {inTime:"2017/6/29",content:"Add todo list",remarks:"this is the test text",level:2,state:true},
-                {inTime:"2017/6/29",content:"Add todo list",remarks:"this is the test text",level:3,state:false},
-            ],
+            todos:pagerData,
             todo:{
                 inTime:"",
                 content:"",
                 level:3,
-                state:false
+                state:"false"
             },
             search:{
                 inTime:"",
@@ -203,17 +196,18 @@
                         csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
                     },
                     success:function (rep) {
-                        that.todo.inTime = new Date();
-                        that.todos.unshift(this.todo);
+                        let rd = JSON.parse(rep);
+                        that.todo.inTime = rd.inTime;
+                        that.todos.unshift(that.todo);
                         that.todo = {
                             inTime:"",
                             content:"",
                             level:3,
-                            state:false
+                            state:"false"
                         }
                     },
                     error:function (rep) {
-
+                        console.log("Something error")
                     }
                 });
             },
