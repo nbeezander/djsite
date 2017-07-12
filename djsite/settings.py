@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'polls',  # 添加自定义应用
     'parse',
     'spider',
-    'todo'
+    'todo',
+    'nlp'
     # 'channels'
 ]
 

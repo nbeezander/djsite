@@ -23,32 +23,13 @@ class MySpider(scrapy.Spider):
 
 
 if __name__ == '__main__':
-    # rule = {
-    #     "start_urls":[
-    #     'http://quotes.toscrape.com/page/1/',
-    #     'http://quotes.toscrape.com/page/2/',
-    # ]
-    # }
-    #
-    # process = CrawlerProcess(get_project_settings())
-    #
-    # process.crawl(MySpider, rule)
-    # process.start()
-    import urllib
-    from urllib import request
-    from bs4 import BeautifulSoup
-    from scrapy.selector import Selector
-    from scrapy.http import HtmlResponse,TextResponse
     import requests
-    import json
-
-    a = requests.request("get","https://movie.douban.com/")
-
-    ex = Selector(response=a).css("div.nav a::text").extract()
-
-    d = {
-        "html":a.text,
-        "extract":ex
-    }
-
-    print(json.dumps(d))
+    url = "http://localhost:8082/api/area!orgs.action"
+    method = "get"
+    headers = {'Content-Type': 'application/json'}
+    data = {
+    "province":"北京市",
+    "city":"西城区"
+}
+    res = requests.request(method=method, url=url ,data=data,headers=headers )
+    print(str(res.content,encoding="utf-8"))

@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from .models import Todo
+from .models import Todo, Child
 from django.http import HttpResponse
 import json
 # Create your views here.
@@ -32,3 +32,40 @@ def ajax_add(request):
         t = n_todo.in_time.fromtimestamp(n_todo.in_time.timestamp())
         return HttpResponse(json.dumps({"inTime":t.strftime('%Y/%m/%d %H:%M'),"content":n_todo.content}))
 
+
+def ajax_change_state(request):
+    if request.is_ajax():
+        t_id = request.POST['id']
+        state = request.POST['state'] == "true"
+        t = Todo.objects.get(pk=t_id)
+        t.state = state
+        t.save()
+        return HttpResponse("success")
+
+
+def ajax_edit(request, todo_id):
+    t = get_object_or_404(Todo,pk=todo_id)
+    print(t)
+    return HttpResponse("fff")
+
+
+def ajax_add_child(request):
+    if request.is_ajax():
+        data = request.session['child']
+        child = Child(**data)
+        child.save()
+
+        return HttpResponse("miao")
+
+
+def api_test(request):
+
+    return render(request,"todo/api_test.html")
+
+
+def nlp(request):
+    return render(request, "todo/nlp.html")
+
+
+def references(request):
+    return render(request, "todo/references.html")

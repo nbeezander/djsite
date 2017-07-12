@@ -5,7 +5,8 @@ from django.utils.deprecation import MiddlewareMixin
 import re
 dictRe = re.compile("^(\w+)\[(\w+)\]$")
 listRe = re.compile("^(\w+)\[(\d+)\]\[(\w+)\]$")
-
+ignore_paras = ['csrfmiddlewaretoken']
+j_bool = ['true','false']
 
 class RequestBeautyMiddleWare(MiddlewareMixin):
     """
@@ -17,9 +18,10 @@ class RequestBeautyMiddleWare(MiddlewareMixin):
     def process_request(self, request):
         t_data_name= []
         if request.method == 'POST':
-            print("POST DATA:")
+            print("Parameters : ")
             for item in request.POST:
-                print(item,request.POST[item])
+                if item not in ignore_paras:
+                    print("    {0} : {1}".format(item, request.POST[item]))
                 if dictRe.findall(item):
                     h, t = dictRe.findall(item)[0]
                     if h in request.session:

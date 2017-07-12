@@ -18,8 +18,9 @@ from django.contrib import admin
 from django.shortcuts import render
 from todo import views
 
+
 def index(request):
-    return render(request,"index.html")
+    return render(request, "index.html")
 
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     url(r'^parse/', include('parse.urls', namespace="parse")),
     url(r'^spider/', include('spider.urls', namespace="spider")),
     url(r'^todo/', include('todo.urls', namespace="todo")),
+    url(r'^nlp/', include('nlp.urls', namespace="nlp")),
 ]

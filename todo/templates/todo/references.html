@@ -1,0 +1,53 @@
+{% extends "base/base.html" %}
+{% block style %}
+    <style>
+    thead{
+        font-size: 1.3em;
+    }
+    tr > th {
+        width: 10%;
+    }
+    </style>
+{% endblock %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block mainbody %}
+    <section id="vueApp" class="container">
+    <table class="">
+        <caption><h3>链接列表</h3></caption>
+    <thead>
+    <tr>
+        <th>链接</th>
+        <th>类型</th>
+        <th>简介</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="item in ml">
+        <td><a :href="item.link" target="_blank">${ item.name }</a></td>
+        <td>${ item.type }</td>
+        <td>${ item.desc }</td>
+    </tr>
+    </tbody>
+    </table>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    <script>
+
+        $("body").removeClass("custom-background");
+        let app = new Vue({
+            el:"#vueApp",
+            data:{
+                ml:[
+                    {link:"https://www.jiqizhixin.com/", name:"机器之心", type:"资讯", desc:"" },
+                ]
+            }
+        })
+    
+    </script>
+{% endblock %}

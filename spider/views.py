@@ -48,15 +48,16 @@ def test(request):
         url = request.POST['url']
         rule = request.POST['rule']
         r_m = request.POST['method']
+        extract = request.POST['extract']
 
         res = requests.request(method=method,url=url)
 
         se = Selector(response=res)
 
-        result = getattr(se,r_m)(rule).extract()
+        result = getattr(getattr(se, r_m)(rule), extract)()
         d = {
-            "text":res.text,
-            "extract":result
+            "html": res.text,
+            "result": result
         }
         return HttpResponse(json.dumps(d))
 

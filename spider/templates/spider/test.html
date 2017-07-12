@@ -8,27 +8,35 @@
                 <div class="panel-heading">
                     Main info
                     <div class="pull-right">
-                        <button type="button" v-on:click="submit" class="btn btn-success">Submit</button>
+                        <button type="button" v-on:click="submit" class="btn btn-success btn-sm">Submit</button>
                     </div>
                 </div>
                 <div class="panel-body">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                             <div class="form-group">
-                                <label for="">网址</label>
-                                <input id="" name="" type="text" class="form-control" title="" v-model="url"/>
+                                <label for="url">URL</label>
+                                <input id="url" name="" type="text" class="form-control" title="" v-model="url"/>
                             </div>
                         </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Rule</label>
-                            <input id="" name="" type="text" class="form-control" title="" v-model="rule"/>
+                            <label for="rule">Rule</label>
+                            <input id="rule" name="" type="text" class="form-control" title="" v-model="rule"/>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <label for="">Method</label>
-                            <select v-model="method" class="form-control">
+                            <label for="method">Method</label>
+                            <select id="method" v-model="method" class="form-control">
                                 <option v-for="m in methods">${ m }</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="extract">Extract</label>
+                            <select id="extract" v-model="extract" class="form-control">
+                                <option v-for="e in extracts">${ e }</option>
                             </select>
                         </div>
                     </div>
@@ -44,13 +52,13 @@
                     <div class="col-md-8">
                         <div class="form-group">
                             <label for="">Html</label>
-                            <pre style="max-height: 600px;overflow-y: scroll;min-height: 200px">${ response }</pre>
+                            <pre style="overflow: scroll;min-height: 200px;max-height: 600px">${ response }</pre>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="">Extract</label>
-                            <pre style="min-height: 200px;overflow-y: scroll">${ extract }</pre>
+                            <label for="">Result</label>
+                            <pre style="min-height: 200px;overflow-y: scroll;max-height: 600px">${ result }</pre>
                         </div>
                     </div>
                 </div>
@@ -68,7 +76,9 @@
             method:"css",
             methods:['css','xpath'],
             response:"",
-            extract:""
+            result:"",
+            extract:"extract",
+            extracts:['extract','extract_first']
         },
         methods:{
             submit:function () {
@@ -79,12 +89,13 @@
                         url:that.url,
                         rule:that.rule,
                         method:that.method,
+                        extract:that.extract,
                         csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
                     },
                     success:function (response) {
                         let j = JSON.parse(response);
-                        that.response = j['text'];
-                        that.extract = j['extract']
+                        that.response = j['html'];
+                        that.result = j['result']
                     },
                     error:function () {
                         console.log("error")

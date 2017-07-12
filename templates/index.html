@@ -7,8 +7,8 @@
             <div class="col-md-11 col-md-offset-1 time-line" style="min-height: 80px">
                 <div class="col-md-3">
                     <button class="btn btn-info" data-toggle="modal" data-target="#newTodo">
-	                New
-                </button>
+	                    New Task
+                    </button>
                 <div class="modal fade" id="newTodo" tabindex="-1" role="dialog" aria-labelledby="newTodoLabel" aria-hidden="true">
 	                <div class="modal-dialog">
 		                <div class="modal-content">
@@ -17,21 +17,21 @@
                                     &times;
                                 </button>
                                 <h4 class="modal-title" id="newTodoLabel">
-                                    New
+                                    Create New Task
                                 </h4>
                             </div>
                             <div class="modal-body">
                                 <div class="form-horizontal" role="form">
                                     <div class="form-group">
-                                        <label for="" class="col-md-2 control-label">Content :</label>
+                                        <label for="newTaskContent" class="col-md-2 control-label">Content :</label>
                                         <div class="col-md-10">
-                                            <input type="text" class="form-control" v-model="todo.content">
+                                            <input id="newTaskContent" type="text" class="form-control" v-model="todo.content" placeholder="按下Enter键完成输入">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="" class="col-md-2 control-label">Level :</label>
+                                        <label for="taskLevels" class="col-md-2 control-label">Level :</label>
                                         <div class="col-md-2">
-                                            <select class="form-control" v-model="todo.level">
+                                            <select id="taskLevels" class="form-control" v-model="todo.level">
                                                 <option value="1">1</option>
                                                 <option value="2">2</option>
                                                 <option value="3">3</option>
@@ -73,12 +73,15 @@
                     </select>
                 </div>
                 </div>
+                <div class="col-md-3">
+                    <button class="btn-primary btn" type="button" v-on:click="testpk">test</button>
+                </div>
             </div>
-            <div class="col-md-11 col-md-offset-1 time-line" v-for="todo in todos">
+            <div class="col-md-11 col-md-offset-1 time-line" v-for="(todo,index) in todos">
                 <div class="todo-icon">
-                    <input title="" type="checkbox" class="hidden"  v-model="todo.state"/>
+                    <input title="" type="checkbox" class="hidden"  v-model="todo.state" v-on:change="change_state(index)"/>
                     <a href="javascript:" style="text-decoration:none;">
-                        <i class="icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state=='true', 'icon-circle-blank' : todo.state=='false'}"> </i>
+                        <i class="icon-2x" :class="{'text-danger':todo.level==1,'text-warning':todo.level==2,'text-info':todo.level==3,'icon-ok-circle' : todo.state==true, 'icon-circle-blank' : todo.state==false}"> </i>
                     </a>
                 </div>
                 <div class="panel" :class="{'panel-danger':todo.level==1,'panel-warning':todo.level==2,'panel-info':todo.level==3}">
@@ -100,9 +103,10 @@
                         </div>
                         <div>
                             <ul class="list-group">
-                                <li class="list-group-item" v-for="child in todo.child">${ child.content }</li>
+                                <li class="list-group-item" v-for="(child, item_index) in todo.child">${ item_index + 1 }: ${ child.content }</li>
+                                <li class="list-group-item"><input title="add_child" :id="'item'+index" placeholder="添加子任务(Enter提交)" v-on:keyup="add_child(index, todo.id)"  type="text" style="max-width: 40%" class="form-control child_input"></li>
                                 <li class="list-group-item">
-                                    <a href="javascript:"><i class="icon-plus"></i>add detail</a>
+                                    <a href="javascript:" v-on:click="add_child(index,todo.content)"><i class="icon-plus"></i>add detail</a>
                                 </li>
                             </ul>
                         </div>
@@ -117,15 +121,15 @@
 
 {% block footer %}
 <script>
-{#    let fabric = require('fabric').fabric;#}
 
     let  pagerData = [
         {% for todo in todo_list %}
             {
+                id:"{{ todo.id }}",
                 inTime:"{{ todo.in_time|date:"Y/m/d H:i" }}",
                 content:"{{ todo.content}}",
                 level:"{{ todo.level }}",
-                state:"{{ todo.state|lower }}",
+                state:"{{ todo.state|lower }}" === "true",
                 remarks:"{{ todo.remarks }}",
                 child:[
                 {% for foo in todo.child_set.all %}
@@ -139,7 +143,7 @@
     ];
     $(function () {
         $("a").find("i.todo-edit").on('click',function () {
-            console.log("ss");
+
             let par = $(this).parent().parent();
             par.find("input").removeClass("hidden");
             par.find(".todo-check").removeClass("hidden");
@@ -151,20 +155,24 @@
             par.find(".todo-check").addClass("hidden");
             par.find(".todo-header").removeClass("hidden");
         });
-        $("body").keyup(function () {
-            if (event.which === 13 && !app.todo.content===""){
-
-                $("#todoSubmit").click()
+        $("#newTaskContent").keyup(function () {
+            if (event.which === 13 && app.todo.content!==""){
+                $("#todoSubmit").click();
+                app.new_todo()
             }
-        });
-        $("#todoSubmit").on('click',function () {
-
-
         });
         $("#vueApp").on("click",".todo-icon a",function () {
             $(this).parent().find(":checkbox").click()
         });
         $("[data-toggle='popover']").popover();
+
+        $(".child_input").on('keyup',function () {
+            if (event.which === 13){
+{#                console.log($(this).val())#}
+                app.add_child($(this).attr("id"),$(this).val())
+            }
+
+        })
     });
 
     let app = new Vue({
@@ -175,7 +183,7 @@
                 inTime:"",
                 content:"",
                 level:3,
-                state:"false"
+                state:false
             },
             search:{
                 inTime:"",
@@ -203,7 +211,7 @@
                             inTime:"",
                             content:"",
                             level:3,
-                            state:"false"
+                            state:false
                         }
                     },
                     error:function (rep) {
@@ -214,6 +222,64 @@
             save_todo:function (index) {
 
 
+            },
+            testpk:function () {
+                $.post({
+                    url:"/todo/1/ajax_edit",
+                    data:{
+                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                        a:"1"
+                    },
+                    success:function (rep) {
+                        console.log(rep)
+                    }
+                })
+            },
+            new_child:function () {
+                
+            },
+            add_child:function (index, parent_id) {
+                let that = this;
+                let node = $(`#item${index}`);
+                if(event.which === 13 && node.val()){
+                    $.post({
+                        url:"{% url "todo:ajax_add_child" %}",
+                        data : {
+                            child:{
+                                parent_id : parent_id,
+                                content : node.val()
+                            },
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                        },
+                        success:function (res) {
+                            that.todos[index].child.push({content:node.val()});
+                            node.val("")
+                        },
+                        error:function (res) {
+                            console.log(res)
+                        }
+
+                    })
+
+
+                }
+            },
+            change_state:function (index) {
+                let that = this;
+                $.post({
+                    url:"{% url "todo:ajax_change_state" %}",
+                    data:{
+                        id:that.todos[index].id,
+                        state:that.todos[index].state,
+                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                    },
+                    success:function (res) {
+                        console.log(res)
+                    },
+                    error:function (res) {
+
+                    }
+                })
             }
         },
         watch:{
