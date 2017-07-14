@@ -69,3 +69,7 @@ def nlp(request):
 
 def references(request):
     return render(request, "todo/references.html")
+
+
+def music(request):
+    return render(request, "todo/music.html")

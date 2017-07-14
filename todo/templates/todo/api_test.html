@@ -14,11 +14,14 @@
                                 <option v-for="method in methods">${ method }</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <input type="text" title="" placeholder="url" v-model="url" class="form-control"/>
                         </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-primary" v-on:click="send">SEND</button>
+                        <div class="col-md-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" v-on:click="send">AJAX</button>
+                                <button type="button" class="btn btn-primary" v-on:click="request">Request</button>
+                            </div>
                         </div>
 
                     </div>
@@ -31,16 +34,31 @@
                     Data
                 </div>
                 <div class="panel-body">
-                    <div class="col-md-6">
+
+
+                    <div class="row">
+                        <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Data</label>
-                            <textarea title="" rows="15" v-model="ajax_data" class="form-control"></textarea>
+                            <textarea title="" style="resize: vertical" rows="15" v-model="ajax_data" class="form-control"></textarea>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                        <div class="col-md-6">
                         <div class="form-group">
                             <label for="">Response</label>
-                            <textarea class="form-control" title="" rows="15" v-model="response"></textarea>
+                            <textarea style="resize: vertical" class="form-control" title="" rows="15" v-model="response"></textarea>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="">Content-Type</label>
+                                <select name="" id=""  v-model="contentType" class="form-control">
+                                    <option value=""></option>
+                                    <option value="application/json">application/json</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,6 +75,7 @@
         data:{
             url:"http://localhost:8082/api/area!list.action",
             methods:['GET', 'POST'],
+            contentType:"",
             type:"GET",
             ajax_data:`
 {
@@ -75,12 +94,15 @@
                 }else{
                     d = {}
                 }
+                if(that.contentType === "application/json"){
+                    d = JSON.stringify(d)
+                }
 
                 $.ajax({
                     url:that.url,
                     type:that.type,
                     data:d,
-
+                    contentType:that.contentType,
                     success:function (res) {
                         that.response = res;
                     },
@@ -89,6 +111,11 @@
                     }
                 })
 
+
+            },
+            request:function () {
+                let that = this;
+                window.alert("暂未实现")
 
             }
         }

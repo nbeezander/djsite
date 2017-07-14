@@ -6,7 +6,7 @@ import re
 dictRe = re.compile("^(\w+)\[(\w+)\]$")
 listRe = re.compile("^(\w+)\[(\d+)\]\[(\w+)\]$")
 ignore_paras = ['csrfmiddlewaretoken']
-j_bool = ['true','false']
+# 过滤请求类型
 
 class RequestBeautyMiddleWare(MiddlewareMixin):
     """
@@ -31,7 +31,7 @@ class RequestBeautyMiddleWare(MiddlewareMixin):
                     if h not in t_data_name:
                         t_data_name.append(h)
                 elif listRe.findall(item):
-                    h,i,t = listRe.findall(item)[0]
+                    h, i, t = listRe.findall(item)[0]
                     i = int(i)
                     if h in request.session:
                         l = len(request.session[h])
