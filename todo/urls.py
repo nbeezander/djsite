@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^references$', views.references, name='references'),
     url(r'^nlp', views.api_test, name='nlp'),
     url(r'^music$', views.music, name='music'),
+    url(r'^search$', views.todoFilter, name='search'),
 
 ]

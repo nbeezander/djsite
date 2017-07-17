@@ -54,27 +54,24 @@
 
                 <div class="col-md-3">
                     <div class="form-inline">
-                    <label class="control-label">状态:</label>
-                    <select v-model="search.state" class="form-control">
-                        <option value=""></option>
-                        <option value="true">进行中</option>
-                        <option value="false">已完成</option>
-                    </select>
-                </div>
+                        <label class="control-label">状态:</label>
+                        <select v-model="search.state" title="状态" v-on:change="filter" class="form-control">
+                            <option value=""></option>
+                            <option value="true">已完成</option>
+                            <option value="false">未完成</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-inline">
-                    <label for="" class="control-label">Level:</label>
-                    <select class="form-control" v-model="search.level">
-                        <option></option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                    </select>
-                </div>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn-primary btn" type="button" v-on:click="testpk">test</button>
+                        <label for="" class="control-label">Level:</label>
+                        <select class="form-control" v-model="search.level" title="" v-on:change="filter">
+                            <option></option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="col-md-11 col-md-offset-1 time-line" v-for="(todo,index) in todos">
@@ -104,7 +101,7 @@
                         <div>
                             <ul class="list-group">
                                 <li class="list-group-item" v-for="(child, item_index) in todo.child">${ item_index + 1 }: ${ child.content }</li>
-                                <li class="list-group-item"><input title="add_child" :id="'item'+index" placeholder="添加子任务(Enter提交)" v-on:keyup="add_child(index, todo.id)"  type="text" style="max-width: 40%" class="form-control child_input"></li>
+                                <li class="list-group-item"><input title="add_child" :id="'item'+index" placeholder="添加子任务(Enter完成)" v-on:keyup="add_child(index, todo.id)"  type="text" style="max-width: 40%" class="form-control child_input"></li>
                                 <li class="list-group-item">
                                     <a href="javascript:" v-on:click="add_child(index,todo.content)"><i class="icon-plus"></i>add detail</a>
                                 </li>
@@ -121,6 +118,22 @@
 
 {% block footer %}
 <script>
+    let href = window.location.href;
+
+    function getParameter(name) {
+        let query = href.split("?");
+        if (query.length > 1){
+            query = query[1]
+        }else{
+            return ""
+        }
+        let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        let r = query.match(reg);
+        if (r && r[2]){
+            return r[2]
+        }
+        return ""
+    }
 
     let  pagerData = [
         {% for todo in todo_list %}
@@ -141,6 +154,7 @@
             },
         {% endfor %}
     ];
+    let token = $("[name='csrfmiddlewaretoken']").val();
     $(function () {
         $("a").find("i.todo-edit").on('click',function () {
 
@@ -187,8 +201,8 @@
             },
             search:{
                 inTime:"",
-                level:"",
-                state:""
+                level:getParameter('level'),
+                state:getParameter('state')
             }
         },
         methods:{
@@ -223,20 +237,8 @@
 
 
             },
-            testpk:function () {
-                $.post({
-                    url:"/todo/1/ajax_edit",
-                    data:{
-                        csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                        a:"1"
-                    },
-                    success:function (rep) {
-                        console.log(rep)
-                    }
-                })
-            },
             new_child:function () {
-                
+
             },
             add_child:function (index, parent_id) {
                 let that = this;
@@ -280,9 +282,26 @@
 
                     }
                 })
-            }
+            },
+            filter:function () {
+                let query = "";
+                if (this.search.state){
+                    query += 'state='+this.search.state
+                }
+                if (query){
+                    query += "&"
+                }
+                if (this.search.level){
+                    query += 'level='+this.search.level
+                }
+
+                window.location.href = "./?"+query
+            },
         },
         watch:{
+
+        },
+        computed:{
 
         }
     })

@@ -8,6 +8,7 @@ listRe = re.compile("^(\w+)\[(\d+)\]\[(\w+)\]$")
 ignore_paras = ['csrfmiddlewaretoken']
 # 过滤请求类型
 
+
 class RequestBeautyMiddleWare(MiddlewareMixin):
     """
     对象化post数据

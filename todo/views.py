@@ -11,7 +11,15 @@ class IndexView(generic.ListView):
     context_object_name = "todo_list"
 
     def get_queryset(self):
-        return Todo.objects.order_by('-in_time').all()
+        fil = {
+
+        }
+        if 'state' in self.request.GET:
+            s = self.request.GET['state']
+            fil['state'] = s == 'true'
+        if 'level' in self.request.GET:
+            fil['level'] = self.request.GET['level']
+        return Todo.objects.filter(**fil).order_by('-in_time').all()
 
 
 # API methods
