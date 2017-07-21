@@ -17,7 +17,7 @@
 {% block mainbody %}
     <section id="vueApp" class="container">
     <table class="">
-        <caption><h3>链接列表</h3></caption>
+        <caption><h3>机器学习</h3></caption>
     <thead>
     <tr>
         <th>链接</th>
@@ -27,6 +27,24 @@
     </thead>
     <tbody>
     <tr v-for="item in ml">
+        <td><a :href="item.link" target="_blank">${ item.name }</a></td>
+        <td>${ item.type }</td>
+        <td>${ item.desc }</td>
+    </tr>
+    </tbody>
+    </table>
+        <br>
+    <table class="">
+        <caption><h3>API文档</h3></caption>
+    <thead>
+    <tr>
+        <th>链接</th>
+        <th>类型</th>
+        <th>简介</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="item in doc">
         <td><a :href="item.link" target="_blank">${ item.name }</a></td>
         <td>${ item.type }</td>
         <td>${ item.desc }</td>
@@ -45,7 +63,13 @@
             data:{
                 ml:[
                     {link:"https://www.jiqizhixin.com/", name:"机器之心", type:"资讯", desc:"" },
-                ]
+                    {link:"http://www.guokr.com/", name:"果壳网", type:"科学社区", desc:"交流" },
+                ],
+                doc:[
+                    {link:"http://pandas.pydata.org/pandas-docs/stable/",name:"Pandas", type:"文档", desc:""},
+                    {link:"https://cn.vuejs.org/v2/api/",name:"Vue.js", type:"文档", desc:""},
+                ],
+
             }
         })
     

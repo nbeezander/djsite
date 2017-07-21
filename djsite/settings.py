@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'm6m$*&zq*=splw9!v8a(kt71p8*wakz17%u3wgi8@gjybexktx'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -41,7 +39,8 @@ INSTALLED_APPS = [
     'parse',
     'spider',  # 爬虫 数据收集
     'todo',  #
-    'nlp'  # 自然语言处理
+    'nlp',  # 自然语言处理
+    'mining',  # 数据挖掘
     # 'channels'
 ]
 
@@ -143,4 +142,22 @@ STATICFILES_DIRS = (
 #         },
 #         "ROUTING": "chat.routing.channel_routing",
 #     },
+# }
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console':{
+#             'level':'DEBUG',
+#             'class':'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'handlers': ['console'],
+#             'propagate': True,
+#             'level':'DEBUG',
+#         },
+#     }
 # }

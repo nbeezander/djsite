@@ -14,7 +14,7 @@
     {% endblock %}
 
 </head>
-<body class="custom-background">
+<body class="{% block body_class %}custom-background{% endblock %}">
 {% block header %}
 {% include "base/header.html" %}
 {% endblock %}
