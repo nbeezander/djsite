@@ -11,19 +11,35 @@
 {% block mainbody %}
     <section class="container">
 
-    {% for type in type_list %}
+    <div class="row" style="min-height: 100px">
+        <div class="col-md-12">
+            <p>资源收集</p>
+        </div>
+        <div class="col-md-2 col-md-offset-10">
+            <div class="btn-group">
+                <a href="../admin/mining/resource/add/" class="btn btn-info">新增</a>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="font-size: 1.2em">
+        <div class="col-md-10 col-md-offset-1">
+            {% for type in type_list %}
         <h4 class="type_name">
-            <a href="#{{ type.name }}" class="hidden" style="color: lavender; text-decoration-line: none">
+            <a href="#{{ type.name }}" class="" style="color: lavender; text-decoration-line: none">
                 <i class="icon-link"></i>
             </a>
             {{ type.name }}
         </h4>
         <ul>
         {% for resource in type.resource_set.all %}
-        <li>{{ resource.name }}: {{ resource.intro }} <a href="{{ resource.link }}">链接</a></li>
+        <li>
+            <a href="{{ resource.link }}" target="_blank">{{ resource.name }}</a>
+            : {{ resource.intro }} </li>
         {% endfor %}
         </ul>
     {% endfor %}
+        </div>
+    </div>
 
     </section>
 {% endblock %}
@@ -31,7 +47,7 @@
 {% block footer %}
     <script>
         $(function () {
-            $()
+
         })
     </script>
 
