@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
-from .models import Resource, Type
+from .models import Resource, Type, Project, Item, Rule, Headers, Url
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 # Create your views here.
 
 
@@ -25,3 +26,14 @@ class IndexList(ListView):
 
     def get_queryset(self):
         return Type.objects.all()
+
+
+def spider(request):
+    return render(request,"mining/spider.html")
+
+
+def crawl(request):
+
+    p = get_object_or_404(Project,pk=request.POST['projrct_id'])
+    p.rules_set()
+    pass

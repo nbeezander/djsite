@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'todo',  #
     'nlp',  # 自然语言处理
     'mining',  # 数据挖掘
+    'blog',  # blog
     # 'channels'
 ]
 

@@ -15,3 +15,14 @@ class Todo(models.Model):
 class Child(models.Model):
     parent = models.ForeignKey(Todo,verbose_name="Todo")
     content = models.CharField(verbose_name="Content", max_length=255)
+
+#
+# class Article(models.Model):
+#     content = models.TextField(verbose_name="内容", max_length=2048)
+#     in_date = models.TimeField(verbose_name="创建日期", auto_created=True)
+#     type = models.ForeignKey(ArticleType, verbose_name="类别")
+#
+#
+# class ArticleType(models.Model):
+#     name = models.CharField(verbose_name="分类名称", max_length=16)
+#     intro = models.CharField(verbose_name="简介", max_length=32, null=True)
