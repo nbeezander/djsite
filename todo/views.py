@@ -10,3 +10,7 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         return Todo.objects.all()
+
+
+def canvas(request):
+    return render(request, "todo/canvas.html")
