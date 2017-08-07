@@ -7,6 +7,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^resource$', view=views.IndexList.as_view(), name='resource')
-
+    url(r'^resource$', view=views.IndexList.as_view(), name='resource'),
+    url(r'^spider$', view=views.ProjectList.as_view(), name='spider'),
+    url(r'^detail$', view=views.projectDetail, name='detail'),
+    url(r'^crawl', view=views.crawl, name='crawl'),
 ]

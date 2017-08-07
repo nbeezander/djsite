@@ -1,10 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base/base.html" %}
 
-</body>
-</html>
+{% block style %}
+
+{% endblock %}
+
+{% block mainbody %}
+    {% csrf_token %}
+<section class="container" id="vueApp" xmlns:v-on="http://www.w3.org/1999/xhtml">
+    <div class="row">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <span>选择项目</span>
+                <div class="pull-right">
+                    <div class="btn-group">
+                        <a href="../admin/mining/project" class="btn btn-info btn-sm">新增</a>
+                        <button type="button" class="btn btn-info btn-sm" v-on:click="crawl()">爬取</button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="selectProject">项目列表</label>
+                        <select id="selectProject" class="form-control" v-model="project_id" v-on:change="change_project()">
+                            {% for project in project_list %}
+                            <option value="{{ project.id }}">{{ project.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <span>数据</span>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-8">
+                    <table class="table table-bordered table-responsive table-striped">
+                        <thead>
+                        <tr>
+                        <th v-for="col in columns">${ col }</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="item in items">
+                            <td v-for="col in columns">${ item[col] }</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% comment %}<div class="col-md-4">
+                    <ul>
+                        <li v-for="url in urls">
+                            <a href="url">${ url }</a>
+                        </li>
+                    </ul>
+                </div>{% endcomment %}
+            </div>
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block footer %}
+<script>
+
+let app = new Vue({
+    el:"#vueApp",
+    data:{
+        project_id:"",
+        columns:[],
+        urls:[],
+        items:[]
+    },
+    methods:{
+        change_project:function () {
+            let that = this;
+            $.post({
+                url:"{% url 'mining:detail' %}",
+                data:{
+                    csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                    project_id:that.project_id
+                },
+                success:function (res) {
+                    let jl = JSON.parse(res);
+                    that.columns = jl['cols'];
+                    that.urls = jl['urls'];
+                },
+                error:function (res) {
+                    console.log(res)
+                }
+            })
+        },
+        crawl:function () {
+            let that = this;
+            if(window.ws){
+                window.ws.close()
+            }
+            let ws = new WebSocket("ws://" + window.location.host + "/mining/crawl?id="+that.project_id);
+            ws.onopen = function () {
+                console.log("WebSocket Connected")
+            };
+            ws.onmessage=function (msg) {
+                let jl = JSON.parse(msg.data);
+                console.log(jl);
+                that.$data.items.push(jl);
+{#                        var jl = JSON.parse(msg.data);#}
+{#                        if (that.items.length >=5){#}
+{#                            that.items.shift()#}
+{#                        }#}
+{#                        that.items.push(jl)#}
+            };
+            ws.onclose=function (p1) {
+                console.log("WebSocket Closed")
+            };
+            ws.onerror = function (p1) {
+                console.log("SomeThing error...")
+            };
+            window.ws = ws
+        }
+    }
+})
+</script>
+{% endblock %}
