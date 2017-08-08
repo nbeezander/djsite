@@ -19,6 +19,7 @@ TODO 0.2
         1. 图片
         2.
     5. 多线程
+    6. 结束条件判定
 
 """
 import requests
@@ -27,11 +28,17 @@ from scrapy.selector import Selector
 import pandas as pd
 import numpy as np
 import copy
+from .models import Project, Url, Item
 
 
 class Spider:
     """
-    @:param project
+    Parameters:
+    ---------------------------
+        project : 项目配置
+        socket  : websocket default None
+        ORM     : 是否数据库持久化 default False
+        file    : 是否保存为文件 default True
     project:{
         'urls_set':[
             {
@@ -43,7 +50,9 @@ class Spider:
     }
     """
 
-    def __init__(self, project, socket=None):
+    def __init__(self, project, socket=None, orm=False, file=True):
+        if orm:
+            self.project_id = project['id']
         self.name = project['name']
         self.start_urls = project['urls_set']
         self.urls_queue = copy.copy(project['urls_set'])
@@ -56,28 +65,46 @@ class Spider:
             cols.append(rule['name'])
         self.df = Container(row=128, cols=cols, socket=socket)
         self.finish = False
+        self.orm = orm
+        self.file = file
 
     def start(self):
         while self.is_over() and not self.finish:
-            try:
-                q = self.urls_queue.pop()
-                url = q['url']
-                method = q['method']
-                # data = q['data']
-                # cookie = q['cookie']
-                # session = q['session']
-                headers = {}
-                # time out
-                response = requests.request(method=method, url=url)
-                response.encoding = 'utf-8'
-                self.parse(response)
-            except IndexError as e:
-                # list empty
-                self.close()
-            except Exception as e:
-                print(e)
+            q = self.get_url()
 
+            url = q['url']
+            method = q['method']
+            # data = q['data']
+            # cookie = q['cookie']
+            # session = q['session']
+            headers = {}
+            try:
+                response = self.request(url, method)
+                if self.orm:
+                    uid = q['id']
+                    UrlMiddleWare.update(uid=uid, state=1)
+                self.parse(response)
+            except TimeoutError as e:
+                # 请求超时处理
+                try:
+                    response = self.request(url, method)
+                    self.parse(response)
+                except TimeoutError as e:
+                    if self.orm:
+                        uid = q['id']
+                        UrlMiddleWare.update(uid=uid, state=2)
+            except Exception as e:
+                print("Exception:", e)
+                self.close()
         self.close()
+
+    def get_url(self):
+        return self.urls_queue.pop()
+
+    def request(self, url, method):
+        response = requests.request(method=method, url=url)
+        response.encoding = 'utf-8'
+        return response
 
     def parse(self, response):
         self.parse_item(response)
@@ -92,19 +119,13 @@ class Spider:
         UrlMiddleWare.parse(response=response, rules=self.url_rules, spider=self)
         pass
 
-    def parse_img(self):
-        pass
-
-    def loggle(self):
-        pass
-
     def url_g(self):
         for url in self.start_urls:
             yield url
 
     def is_over(self):
         print("len:", self.df.cursor)
-        if self.df.cursor >= 45:
+        if self.df.cursor >= 5:
             self.finish = True
         return len(self.urls_queue) > 0
 
@@ -112,8 +133,13 @@ class Spider:
         pass
 
     def close(self):
+        self.logger("spider close")
         self.df.save()
-        pass
+
+    def logger(self, msg):
+        # 执行日志文件， 待持久化保存
+
+        print("Logger:", msg)
 
 
 class MiddleWare:
@@ -173,14 +199,38 @@ class UrlMiddleWare(MiddleWare):
                         'cookie': '',
                         'session': ''
                     }
+                    if spider.orm:
+                        uid = UrlMiddleWare.save(pid=spider.project_id, url=ui['url'])
+                        ui['id'] = uid
+
                     spider.urls_queue.insert(0, ui)
                     spider.url_set.add(ui['url'])
+
         pass
 
+        # @staticmethod
+        # def save(response):
+        #     url = response.url
+        #     Url(url=url,state=1)
+        #     pass
 
-class Item:
-    "Item处理，item类型判定，保存方式"
-    pass
+    @staticmethod
+    def update(uid, state):
+        url = Url.objects.get(pk=uid)
+        url.state = state
+        url.save()
+        print("update-------")
+
+    @staticmethod
+    def save(pid, url, method="get", cookie=None, session=None):
+        url = Url(project_id=pid, state=0, method=method, url=url, cookie=cookie, session=session)
+        url.save()
+        return url.id
+
+
+# class Item:
+#     "Item处理，item类型判定，保存方式"
+#     pass
 
 
 class Container:
@@ -201,13 +251,13 @@ class Container:
                 pd.DataFrame(np.array([np.nan] * xr * len(self.cols)).reshape(xr, len(self.cols)), columns=self.cols),
                 ignore_index=True)
             self.size += xr
-        if type(series) == type(pd.DataFrame()):
+        if isinstance(series, pd.DataFrame):
             for i in range(len(series)):
                 self.df.ix[self.cursor, :] = series.ix[i, :]
                 print(series.ix[i, :])
                 self.cursor += 1
                 self.send(series.ix[i, :])
-        elif type(series) == type(pd.Series()):
+        elif isinstance(series, pd.Series):
             self.df.ix[self.cursor, :] = series
             self.cursor += 1
             self.send(series)

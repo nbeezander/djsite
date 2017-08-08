@@ -100,7 +100,7 @@ def crawl(request):
     #     message = request.websocket.wait()
     #     request.websocket.send(b"ssss")
     # request.websocket.send(b"ssssss")
-    spider = Spider(project=project, socket=request)
+    spider = Spider(project=project, socket=request, ORM=True)
     spider.start()
 
 
@@ -111,8 +111,10 @@ def pro_format(pid):
     url_rules = Rule.objects.filter(project=pro, type='url').all()
 
     res = {
+        "id":pro.id,
         "name": pro.name,
         "urls_set": [{
+            'id':url.id,
             'url': url.url,
             'method': url.method,
             'session': url.session,
