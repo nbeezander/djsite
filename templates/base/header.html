@@ -7,6 +7,7 @@
             <div>
                 <span class="pull-right" style="min-width: 20%;min-height: 1px"></span>
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/admin">Admin</a></li>
                     <li><a href="{% url "todo:references" %}">References</a></li>
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
@@ -15,19 +16,20 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url "mining:resource" %}">资源收集</a></li>
-                            <li><a href="{% url "todo:music" %}">音乐可视化</a></li>
+                            <li><a href="{% url "spider:test" %}">测试</a></li>
                             <li><a href="{% url "mining:spider" %}">爬虫</a></li>
+                            <li><a href="{% url "todo:music" %}">音乐可视化</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="/" class="dropdown-toggle" data-toggle="dropdown">
-                            Pool
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="{% url "polls:index" %}">index</a></li>
-                        </ul>
-                    </li>
+{#                    <li>#}
+{#                        <a href="/" class="dropdown-toggle" data-toggle="dropdown">#}
+{#                            Pool#}
+{#                            <b class="caret"></b>#}
+{#                        </a>#}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a href="{% url "polls:index" %}">index</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
                             Test

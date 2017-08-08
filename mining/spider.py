@@ -4,7 +4,21 @@
 
 """
 @version: 0.1
-TODO 0.2 1. 数据库持久化 2. time_out
+
+架构：
+
+
+
+TODO 0.2
+    1. 数据库持久化
+    2. requests time_out 策略
+    3. 应对反爬虫的策略
+        1. IP限制
+        2. headers
+    4. 文件爬取
+        1. 图片
+        2.
+    5. 多线程
 
 """
 import requests
@@ -90,7 +104,7 @@ class Spider:
 
     def is_over(self):
         print("len:", self.df.cursor)
-        if self.df.cursor >= 10:
+        if self.df.cursor >= 45:
             self.finish = True
         return len(self.urls_queue) > 0
 
@@ -209,6 +223,14 @@ class Container:
 
     def close(self):
         pass
+
+
+class Setting:
+    """
+    在此处设置 请求 headers,延时策略，。。。
+
+    """
+    pass
 
 
 if __name__ == "__main__":

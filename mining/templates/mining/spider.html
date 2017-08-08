@@ -35,17 +35,28 @@
     <div class="row">
         <div class="panel panel-success">
             <div class="panel-heading">
-                <span>数据</span>
+                <span>爬取数据展示</span>
             </div>
-            <div class="panel-body">
+            <div class="panel-body" style="background-color: #494949;color: white">
+                <div class="col-md-12">
+                    <div class="form-inline">
+                        <label for="maxLength">展示数据题目：</label>
+                        <input type="text" id="maxLength" v-model="max_length" class="form-control" style="border: none">
+                    </div>
+                </div>
+                <hr>
                 <div class="col-md-8">
-                    <table class="table table-bordered table-responsive table-striped">
+                    <table class="table table-responsive">
+                        <caption>已爬取条目：${ count }</caption>
                         <thead>
                         <tr>
                         <th v-for="col in columns">${ col }</th>
                         </tr>
                         </thead>
                         <tbody>
+                        <tr>
+                            <td :colspan="columns.length">......</td>
+                        </tr>
                         <tr v-for="item in items">
                             <td v-for="col in columns">${ item[col] }</td>
                         </tr>
@@ -75,7 +86,9 @@ let app = new Vue({
         project_id:"",
         columns:[],
         urls:[],
-        items:[]
+        items:[],
+        count:0,
+        max_length:10
     },
     methods:{
         change_project:function () {
@@ -108,8 +121,12 @@ let app = new Vue({
             ws.onmessage=function (msg) {
                 let jl = JSON.parse(msg.data);
                 console.log(jl);
+                if (that.items.length >= that.max_length){
+                    that.items.shift()
+                }
                 that.$data.items.push(jl);
-{#                        var jl = JSON.parse(msg.data);#}
+                that.count += 1;
+                {#                        var jl = JSON.parse(msg.data);#}
 {#                        if (that.items.length >=5){#}
 {#                            that.items.shift()#}
 {#                        }#}
