@@ -100,7 +100,7 @@ def crawl(request):
     #     message = request.websocket.wait()
     #     request.websocket.send(b"ssss")
     # request.websocket.send(b"ssssss")
-    spider = Spider(project=project, socket=request, ORM=True)
+    spider = Spider(project=project, socket=request, orm=True)
     spider.start()
 
 

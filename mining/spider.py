@@ -20,6 +20,8 @@ TODO 0.2
         2.
     5. 多线程
     6. 结束条件判定
+    7. 使用队列保存url queue.Queue() LIFO 同步队列，可以多线程操作，多生产者，多消费者
+    8. 测试队列： 生产消费多线程
 
 """
 import requests
@@ -125,7 +127,7 @@ class Spider:
 
     def is_over(self):
         print("len:", self.df.cursor)
-        if self.df.cursor >= 5:
+        if self.df.cursor >= 30:
             self.finish = True
         return len(self.urls_queue) > 0
 
