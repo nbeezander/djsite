@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView
 from .models import Resource, Type, Project, Item, Rule, Headers, Url
-from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import HttpResponse, Http404, HttpResponseRedirect,StreamingHttpResponse
 import json
 from dwebsocket.decorators import accept_websocket, require_websocket
 from .spider import Spider
+import os
 
 
 # Create your views here.
@@ -54,6 +55,7 @@ def projectDetail(request):
 
 
 def spider(request):
+    print("path",os.path.realpath)
     return render(request, "mining/spider.html")
 
 
@@ -138,3 +140,30 @@ def pro_format(pid):
         ]
     }
     return res
+
+
+def csv_download(request):
+    """
+    下载csv文件
+    TODO 路径处理
+    """
+
+    pname = request.GET["pname"]
+    path = "./mining/file/{}/data.csv".format(pname)
+
+    def file_iterator(file_name, chunk_size=512):
+        with open(file_name, encoding="utf-8") as f:
+            while True:
+                c = f.read(chunk_size)
+                if c:
+                    yield c
+                else:
+                    break
+
+    the_file_name = path
+    response = StreamingHttpResponse(file_iterator(the_file_name))
+    response['Content-Type'] = 'text/csv'
+    response['Content-Disposition'] = 'attachment;filename="{0}.csv"'.format(pname)
+
+    return response
+

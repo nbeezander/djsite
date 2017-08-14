@@ -22,6 +22,8 @@ TODO 0.2
     6. 结束条件判定
     7. 使用队列保存url queue.Queue() LIFO 同步队列，可以多线程操作，多生产者，多消费者
     8. 测试队列： 生产消费多线程
+    9. js动态页面
+    10. 判重
 
 """
 import requests
@@ -31,6 +33,7 @@ import pandas as pd
 import numpy as np
 import copy
 from .models import Project, Url, Item
+import os
 
 
 class Spider:
@@ -53,8 +56,7 @@ class Spider:
     """
 
     def __init__(self, project, socket=None, orm=False, file=True):
-        if orm:
-            self.project_id = project['id']
+        self.project_id = project['id']
         self.name = project['name']
         self.start_urls = project['urls_set']
         self.urls_queue = copy.copy(project['urls_set'])
@@ -65,7 +67,7 @@ class Spider:
         cols = []
         for rule in self.item_rules:
             cols.append(rule['name'])
-        self.df = Container(row=128, cols=cols, socket=socket)
+        self.df = Container(row=128, cols=cols, socket=socket, name=self.project_id)
         self.finish = False
         self.orm = orm
         self.file = file
@@ -127,7 +129,7 @@ class Spider:
 
     def is_over(self):
         print("len:", self.df.cursor)
-        if self.df.cursor >= 30:
+        if self.df.cursor >= 5:
             self.finish = True
         return len(self.urls_queue) > 0
 
@@ -236,13 +238,14 @@ class UrlMiddleWare(MiddleWare):
 
 
 class Container:
-    def __init__(self, row, cols, socket=None):
+    def __init__(self, row, cols, socket=None, name=None):
         l = len(cols)
         self.df = pd.DataFrame(np.array([np.nan] * row * l).reshape(row, l), columns=cols)
         self.cursor = 0
         self.size = row
         self.cols = cols
         self.socket = socket
+        self.name = name
 
         pass
 
@@ -265,8 +268,16 @@ class Container:
             self.send(series)
 
     def save(self):
+        path = "mining/file/{}".format(self.name)
+        if not os.path.exists(path):
+            os.mkdir(path)
         self.df = self.df.dropna(how='all')
-        self.df.to_csv("./data.csv", index=None, encoding='utf-8')
+        path += "/data.csv"
+        if os.path.exists(path):
+            pdf = pd.read_csv(path, encoding="utf-8")
+            self.df = pdf.append(self.df, ignore_index=True)
+        self.df.to_csv(path, index=None, encoding='utf-8')
+        print(self.df)
         self.close()
 
     def send(self, data):
