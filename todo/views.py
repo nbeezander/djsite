@@ -7,7 +7,7 @@ import json
 
 
 class IndexView(generic.ListView):
-    template_name = "index.html"
+    template_name = "todo.html"
     context_object_name = "todo_list"
 
     def get_queryset(self):

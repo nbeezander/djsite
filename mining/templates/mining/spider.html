@@ -48,6 +48,7 @@
         <pre v-if="end_time.length != 0">爬取条目：${ count } &nbsp;&nbsp; 时间：${ time }</pre>
         <pre v-if="items.length != 0" style="white-space: pre-wrap;word-wrap: break-word;max-height: 400px;overflow-y: scroll " ><div v-for="item in items">${ item }<br><span>-----------------------------------------------------------</span></div></pre>
         <pre v-if="wsClose.length != 0">${ wsClose }</pre>
+{#        <pre contenteditable="true" id="command"></pre>#}
     </div>
     <div class="col-md-3">
         <ul></ul>

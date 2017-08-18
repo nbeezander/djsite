@@ -6,6 +6,7 @@ import json
 from dwebsocket.decorators import accept_websocket, require_websocket
 from .spider import Spider
 import os
+from .utils import handle_file_upload
 
 
 # Create your views here.
@@ -166,4 +167,20 @@ def csv_download(request):
     response['Content-Disposition'] = 'attachment;filename="{0}.csv"'.format(pname)
 
     return response
+
+
+def pic_upload(request):
+    """
+    文件上传
+    :param request: 请求信息
+    :return: 保存路径
+    """
+    if request.method == 'POST':
+        file = request.FILES.get("pic")
+        f_name = handle_file_upload(file)
+        return HttpResponse(json.dumps({"f_name":f_name}))
+    else:
+        pass
+
+
 
