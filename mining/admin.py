@@ -28,7 +28,7 @@ admin.site.register(Headers)
 class RuleInline(admin.TabularInline):
     model = Rule
     extra = 3
-    fields = ['rule', 'name', 'type', 'col_type', 'method', 'extract']
+    fields = ['name', 'rule', 'type', 'method', 'extract']
 
 
 class UrlInline(admin.StackedInline):

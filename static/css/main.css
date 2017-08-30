@@ -15,12 +15,17 @@
 }
 
 .custom-background{
-    background-position: center center;
     background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-image: url("/static/imgs/bg.png");
+    background: url("/static/imgs/bg.png") no-repeat fixed center center;
 }
+
+.black-background{
+    background-size: cover;
+    background: url("/static/imgs/s4.png") no-repeat;
+    width: 100%;
+    background-size: 100% auto;
+}
+
 .input-danger{
     border-color: #f56954 !important;
     box-shadow: none;

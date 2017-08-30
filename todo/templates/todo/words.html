@@ -1,0 +1,195 @@
+{% extends "base/base.html" %}
+
+{% block style %}
+    <style>
+        a:hover{
+            text-decoration-line: none;
+        }
+    </style>
+{% endblock %}
+{% block body_class %}
+
+{% endblock %}
+{% block mainbody %}
+    <section class="container" id="vueApp">
+        <div class="row">
+
+            <div class="col-md-2 col-md-offset-10">
+                <label for="">coin:<span>${ coin }</span></label>
+                <label for="">hp: <span>${ health }</span></label>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#add_word">add</button>
+                <div class="modal fade" id="add_word" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    添加新单词
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <input type="text" class="form-control" v-model="word" @keyup.13="add_words">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" v-on:click="add_words">确定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div style="width: 100%;height: 200px;text-align: center;padding: 10px">
+                <h1>
+                    <a :href="'https://translate.google.cn/#en/zh-CN/'+arena.name" target="_blank">
+                        ${ arena.word }
+                    </a>
+                </h1>
+                <hr>
+                <h5>level:${ arena.level }</h5>
+                <h5>hp:${ arena.hp }</h5>
+                <div>
+                    <button type="button" @click="attack">attack</button>
+                    <button type="button" @click="defend">defend</button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div>
+
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.3.4"></script>
+<script>
+
+
+let words = [],coin = 100,health=100;
+function init() {
+    let ws = localStorage.getItem("words");
+    if(ws){
+        words = JSON.parse(ws);
+    }else{
+        localStorage.setItem("words","");
+    }
+
+    let tc = localStorage.getItem("coin");
+    if (tc){
+        coin = tc;
+    }else{
+        localStorage.setItem("coin",100);
+    }
+    let th = localStorage.getItem("health");
+    if(th){
+        health = th;
+    }else{
+        localStorage.setItem("health",100);
+    }
+}
+init();
+
+function getItem() {
+    let index=words.choice(1)[0][0];
+
+    return {
+            index:index,
+            name:words[index]['name'],
+            level:words[index]['level'],
+            hp:words[index]['hp']
+        }
+}
+
+
+let app = new Vue({
+    "el":"#vueApp",
+    beforeCreate:function() {
+        let that = this;
+        that.$http({method:"get",url:"api_words.json"}).then(function (res) {
+            that.words = res.body;
+            that.arena = that.words.choice(1)[1][0];
+        })
+    },
+    data:{
+        words:[],
+        coin:coin,
+        word:"",
+        level_hp:5,
+        word_cost:5,
+        health:100,
+        arena:""
+    },
+    methods:{
+        add_words:function () {
+            let that = this;
+            if (that.coin < that.word_cost){
+                return
+            }
+
+            if(that.words.some(x=>x['name']===that.word)){
+                that.words.map(function (x) {
+                    if(x['name'] === that.word){
+                        x['level'] += 1;
+                        x['hp'] += that.level_hp
+                    }
+                })
+            }else{
+                that.words.push({name:that.word,level:1,hp:that.level_hp})
+            }
+            that.coin -= that.word_cost;
+            that.word = "";
+            localStorage.setItem("words",JSON.stringify(that.words));
+            localStorage.setItem("coin",that.coin)
+            $('#add_word').modal('hide')
+        },
+        attack:function () {
+            let that = this;
+            let i = that.arena['index']
+            this.words[i]['hp'] -=1;
+            this.health += 1;
+
+            localStorage.setItem("words",JSON.stringify(that.words));
+            localStorage.setItem("health",this.health);
+            let index = this.words.choice(1)[0][0];
+            this.arena = {
+                index:index,
+                name:that.words[index]['name'],
+                level:that.words[index]['level'],
+                hp:that.words[index]['hp']
+            }
+        },
+        defend:function () {
+            let that = this;
+            let i = that.arena['index'];
+            this.words[i]['hp'] +=1;
+            this.health -=1;
+            if(this.health <= 0){
+                console.log("die")
+            }
+            localStorage.setItem("words",JSON.stringify(that.words));
+            localStorage.setItem("health",this.health)
+            let index = this.words.choice(1)[0][0];
+            this.arena = {
+                index:index,
+                name:that.words[index]['name'],
+                level:that.words[index]['level'],
+                hp:that.words[index]['hp']
+            }
+        },
+    },
+    computed:{
+{#        arena:function () {#}
+{#            return this.words.choice(1)[0]#}
+{#        }#}
+    },
+
+})
+</script>
+{% endblock %}

@@ -24,10 +24,12 @@
 <script src="{% static "js/vue.min.js" %}"></script>
 <script src="{% static "js/vee-validate.js" %}"></script>
 <script src="{% static "js/main.js" %}"></script>
+<script src="{% static "js/admin.js" %}"></script>
 <script>
     Vue.options.delimiters  = ["${","}"];
     Vue.use(VeeValidate)
 </script>
+{% block script %}{% endblock %}
 {% block footer %}{% endblock %}
 </body>
 </html>

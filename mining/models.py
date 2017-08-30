@@ -82,11 +82,11 @@ class Rule(models.Model):
     project = models.ForeignKey(Project, verbose_name="项目")
     name = models.CharField(verbose_name="名称", max_length=16, null=True, blank=True)
     rule = models.CharField(verbose_name="规则", max_length=64)
-    extract = models.CharField(verbose_name="解析", max_length=12, choices=EXTRACT_CHOICES,
+    extract = models.CharField(verbose_name="解析", max_length=16, choices=EXTRACT_CHOICES,
                                default='extract_first')
     method = models.CharField(verbose_name="方法", max_length=8, choices=METHOD_CHOICES, default='css')
     type = models.CharField(verbose_name="类型", max_length=8, choices=TYPE_CHOICES, default="item")
-    col_type = models.CharField(verbose_name="列类型", max_length=8, choices=COLUMN_TYPE, null=True, blank=True)
+    # col_type = models.CharField(verbose_name="列类型", max_length=8, choices=COLUMN_TYPE, null=True, blank=True)
 
 
 class Url(models.Model):

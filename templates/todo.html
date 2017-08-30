@@ -1,0 +1,287 @@
+{% extends "base/base.html" %}
+
+{% block style %}
+<style>
+body{
+    background: #f5f5f5;
+}
+.todo-header{
+    text-align: center;
+}
+.todo-header h1{
+    color: lightcoral;
+    font-size: 8rem;
+}
+.new-todo{
+    width: 100%;
+    padding: 16px 16px 16px 60px;
+    border: none;
+    background: white  no-repeat;
+    box-shadow: inset 0 -2px 1px rgba(0,0,0,0.03);
+    outline: none;
+    font-size: 1.5em;
+{#    background: url("/static/imgs/favicon.ico") no-repeat;#}
+}
+
+.main{
+    background: white;
+{#    text-align: center;#}
+    margin: 0 auto;
+}
+.main ul{
+    padding: 0;
+}
+.main li{
+    list-style: none;
+{#    padding: 10px;#}
+    border-bottom: 1px solid #ededed;
+    margin: 0;
+    padding: 0;
+    font-weight: 300;
+    line-height: 60px;
+    font-size: 1.5em;
+}
+.main li:first-child{
+    border-top: 1px solid #ededed;
+}
+.todo-content{
+    word-break: break-all;
+    white-space: normal;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding: 16px 50px;
+    margin-bottom: 0;
+    line-height: normal;
+}
+.main .toggle{
+{#    float: left;#}
+    position: absolute;
+    left: 10px;
+    text-decoration-line: none;
+    font-size: 1.2em;
+    padding: 0 20px 0 20px;
+    color: #9d9d9d;
+    font-weight: 200;
+}
+.todo-remove{
+    display: none;
+    position: absolute;
+    right: 20px;
+    color: pink;
+    transition: color 0.2s ease-out;
+    border: none;
+    background: none;
+    outline: none;
+}
+.todo-remove:hover{
+    color: tomato;
+}
+
+.main li:hover .todo-remove{
+    display: block;
+}
+.todo-body{
+    width: 40%;
+    margin: 0 auto;
+}
+.todo-complete{
+    color: #d9d9d9;
+    text-decoration: line-through;
+}
+.sign{
+    position: absolute;
+    top: 120px;
+    height: 60px;
+    left: 30px;
+    background: none;
+    border: none;
+    outline: none;
+}
+.sign i{
+    font-size: 2em;
+    color: #d9d9d9;
+}
+.filter{
+    border: 1px solid transparent;
+    background:none;
+    padding: 0 10px;
+    outline: none;
+}
+.filter:hover{
+    background: none;
+    border: 1px solid rgba(175, 47, 47, 0.1);
+}
+.filter-wrap{
+    padding: 10px 0 10px 20px ;
+{#    height: 60px;#}
+}
+.filter-group{
+    padding-left: 80px;
+    display: inline-block;
+}
+.active{
+    border: 1px solid rgba(175, 47, 47, 0.4);
+    background: none;
+}
+ul{
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}
+
+{% block body_class %}
+
+{% endblock %}
+
+{% block mainbody %}
+    {% csrf_token %}
+<section class="container" id="vueApp">
+    <div class="row todo-body">
+        <div class="col-md-12">
+            <header class="todo-header">
+                <h1>todos</h1>
+                <input type="text" class="new-todo" autocomplete="off" v-model="newTodo" @keyup.13="add" autofocus placeholder="What`s need to be done?">
+                <button type="button" class="sign" v-show="todos.length"><i class="icon-angle-down"></i></button>
+            </header>
+            <div class="main">
+                <ul>
+                    <li v-for="(todo,index) in visible_todos">
+                        <a href="javascript:" class="toggle" @click="toggle(index)"><i :class="{'icon-ok-circle':todo.state,'icon-circle-blank':!todo.state}"></i></a>
+                        <button type="button" class="todo-remove" @click="remove(index)"><i class="icon-remove"></i></button>
+                        <p class="todo-content" :class="{'todo-complete':todo.state}">${ todo.content }</p>
+                    </li>
+                </ul>
+                <section class="filter-wrap" v-show="todos.length">
+                    <span><strong>${ left }</strong> item left</span>
+                    <div class="filter-group">
+                        <input type="radio" hidden id="all" value="all" v-model="visible_state">
+                        <label class="filter" :class="{'active':visible_state == 'all'}" for="all">All</label>
+                        <input type="radio" hidden id="active" value="active" v-model="visible_state">
+                        <label class="filter" :class="{'active':visible_state == 'active'}" for="active">Active</label>
+                        <input type="radio" hidden id="complete" value="complete" v-model="visible_state">
+                        <label class="filter" :class="{'active':visible_state == 'complete'}" for="complete">Complete</label>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block footer %}
+    <footer>
+
+    </footer>
+    <script>
+{#        '{{ todo_list }}'#}
+        let todos = [
+            {% for todo in todo_list %}
+                {
+                    content:'{{ todo.content }}',
+                    state:'{{ todo.state }}'==='True'?1:0,
+                    id:'{{ todo.id }}'
+                },
+            {% endfor %}
+        ];
+        let app = new Vue({
+            el:"#vueApp",
+            data:{
+                todos:todos,
+                newTodo:"",
+                visible_state:"all"
+            },
+            methods:{
+                add:function () {
+                    let that = this;
+                    let content = that.newTodo;
+                    if(this.newTodo){
+                        $.post({
+                            url:"{% url "todo:ajax_add" %}",
+                            data:{
+                                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                                content: content
+                            },
+                            success:function (res) {
+                                let jl = JSON.parse(res)
+                                that.todos.unshift({
+                                    content:content,
+                                    state:0,
+                                    id:jl['id']
+                                });
+                            },
+                            error:function (res) {
+                                console.log(res)
+                            }
+                        })
+
+
+                    }
+                    that.newTodo=""
+                },
+                remove:function (index) {
+                    let that = this;
+                    let id = that.todos[index].id;
+
+                    $.post({
+                        url:"{% url "todo:ajax_remove" %}",
+                        data:{
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                            id:id
+                        },
+                        success:function (res) {
+                            that.todos.splice(index,1);
+                        },
+                        error:function (res) {
+                            console.log(res)
+                        }
+                    })
+
+                },
+                toggle:function(index){
+                    let that = this;
+                    let id = this.todos[index].id;
+                    let state = this.todos[index].state^1;
+{#                    this.todos[index].state = this.todos[index].state^1;#}
+                    $.post({
+                        url:"{% url "todo:ajax_change_state" %}",
+                        data:{
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                            id:id,
+                            state:state
+                        },
+                        success:function (res) {
+                            that.todos[index].state = state
+                        },
+                        error:function (res) {
+                            console.log(res)
+                        }
+                    })
+
+
+                },
+            },
+            computed:{
+                left:function () {
+                    let wt = this.todos.filter(function (x) {
+                        return !x.state
+                    });
+                    return wt.length
+                },
+                visible_todos:function () {
+                    if (this.visible_state === 'all'){
+                        return this.todos.filter(x=>1)
+                    }else if(this.visible_state === 'active'){
+                        return this.todos.filter(x=>!x.state)
+                    }else if(this.visible_state=== 'complete'){
+                        return this.todos.filter(x=>x.state)
+                    }
+
+                }
+            }
+
+        })
+
+
+    </script>
+{% endblock %}

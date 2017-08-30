@@ -2,35 +2,70 @@
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">Zander</a>
+                <a class="navbar-brand" href="/">Miaow</a>
             </div>
             <div>
                 <span class="pull-right" style="min-width: 20%;min-height: 1px"></span>
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/" class="dropdown-toggle" data-toggle="dropdown">
-                            Pool
+                    <li><a href="/admin">Admin</a></li>
+                    <li><a href="{% url "todo:references" %}">References</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            笔记
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="{% url "polls:index" %}">index</a></li>
+                            <li><a href="{% url "blog:index" %}">列表</a></li>
+                            <li><a href="{% url "blog:create" %}">新建</a></li>
                         </ul>
                     </li>
-                    <li><a href="#">Test</a></li>
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            Spider
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            数据分析
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a href="{% url "spider:index" %}">Index</a></li>
-                            <li><a href="{% url "spider:test" %}">Test</a></li>
-                            <li><a href="{% url "spider:add" %}">Add</a></li>
-                            <li><a href="{% url "spider:list" %}">List</a></li>
+                            <li><a href="{% url "mining:resource" %}">资源收集</a></li>
+                            <li><a href="{% url "spider:test" %}">测试</a></li>
+                            <li><a href="{% url "mining:spider" %}">爬虫</a></li>
+                            <li><a href="{% url "todo:music" %}">音乐可视化</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            Test
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url "todo:api_test" %}">API_Test</a></li>
+                            <li><a href="{% url "todo:music" %}">Music</a></li>
+                        </ul>
+                    </li>
+{#                    <li class="dropdown">#}
+{#                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">#}
+{#                            Spider#}
+{#                            <b class="caret"></b>#}
+{#                        </a>#}
+{#                        <ul class="dropdown-menu">#}
+{#                            <li><a href="{% url "spider:index" %}">Index</a></li>#}
+{#                            <li><a href="{% url "spider:test" %}">Test</a></li>#}
+{#                            <li><a href="{% url "spider:add" %}">Add</a></li>#}
+{#                            <li><a href="{% url "spider:list" %}">List</a></li>#}
+{#                            <li class="divider"></li>#}
+{#                            <li><a href="#">分离的链接</a></li>#}
+{#                            <li class="divider"></li>#}
+{#                            <li><a href="#">另一个分离的链接</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            NLP
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url "nlp:jieba" %}">Jieba</a></li>
                             <li class="divider"></li>
-                            <li><a href="#">分离的链接</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">另一个分离的链接</a></li>
+                            <li><a href="{% url "nlp:references" %}">参考资料</a></li>
                         </ul>
                     </li>
                 </ul>

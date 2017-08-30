@@ -23,7 +23,7 @@ def index(request):
 
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view()),
+    url(r'^$', views.IndexView.as_view(), name="index"),
     url(r'^admin/', admin.site.urls),
     url(r'^polls/', include('polls.urls', namespace="polls")),
     url(r'^parse/', include('parse.urls', namespace="parse")),
