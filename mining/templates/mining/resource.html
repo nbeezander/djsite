@@ -1,0 +1,54 @@
+{% extends "base/base.html" %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block body_class %}
+
+{% endblock %}
+
+{% block mainbody %}
+    <section class="container">
+
+    <div class="row" style="min-height: 100px">
+        <div class="col-md-12">
+            <p>资源收集</p>
+        </div>
+        <div class="col-md-2 col-md-offset-10">
+            <div class="btn-group">
+                <a href="../admin/mining/resource/add/" class="btn btn-info">新增</a>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="font-size: 1.2em">
+        <div class="col-md-10 col-md-offset-1">
+            {% for type in type_list %}
+        <h4 class="type_name">
+            <a href="#{{ type.name }}" class="" style="color: lavender; text-decoration-line: none">
+                <i class="icon-link"></i>
+            </a>
+            {{ type.name }}
+        </h4>
+        <ul>
+        {% for resource in type.resource_set.all %}
+        <li>
+            <a href="{{ resource.link }}" target="_blank">{{ resource.name }}</a>
+            : {{ resource.intro }} </li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+        </div>
+    </div>
+
+    </section>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        $(function () {
+
+        })
+    </script>
+
+{% endblock %}
