@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',  # 会话框架
     'django.contrib.messages',  # 消息框架
     'django.contrib.staticfiles',  # 管理静态文件的框架
+    'rest_framework',
     'polls',  # 添加自定义应用
     'parse',
     'spider',  # 爬虫 数据收集
@@ -44,6 +45,14 @@ INSTALLED_APPS = [
     'blog',  # blog
     # 'channels'
 ]
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,7 +133,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/

@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import generic
-from .models import Todo, Child
+from .models import Todo, Words
 from django.http import HttpResponse
 import json
 # Create your views here.
@@ -11,15 +11,15 @@ class IndexView(generic.ListView):
     context_object_name = "todo_list"
 
     def get_queryset(self):
-        fil = {
-
-        }
-        if 'state' in self.request.GET:
-            s = self.request.GET['state']
-            fil['state'] = s == 'true'
-        if 'level' in self.request.GET:
-            fil['level'] = self.request.GET['level']
-        return Todo.objects.filter(**fil).order_by('-in_time').all()
+        # fil = {
+        #
+        # }
+        # if 'state' in self.request.GET:
+        #     s = self.request.GET['state']
+        #     fil['state'] = s == 'true'
+        # if 'level' in self.request.GET:
+        #     fil['level'] = self.request.GET['level']
+        return Todo.objects.order_by('-create_time').all()
 
 
 # API methods
@@ -34,17 +34,16 @@ def todoFilter(request):
 
 def ajax_add(request):
     if request.is_ajax():
-        data = request.session['todo']
-        n_todo = Todo(**data)
+        data = request.POST['content']
+        n_todo = Todo(content=data)
         n_todo.save()
-        t = n_todo.in_time.fromtimestamp(n_todo.in_time.timestamp())
-        return HttpResponse(json.dumps({"inTime":t.strftime('%Y/%m/%d %H:%M'),"content":n_todo.content}))
+        return HttpResponse(json.dumps({"id":n_todo.id}))
 
 
 def ajax_change_state(request):
     if request.is_ajax():
         t_id = request.POST['id']
-        state = request.POST['state'] == "true"
+        state = request.POST['state'] == "1"
         t = Todo.objects.get(pk=t_id)
         t.state = state
         t.save()
@@ -57,13 +56,17 @@ def ajax_edit(request, todo_id):
     return HttpResponse("fff")
 
 
-def ajax_add_child(request):
+def ajax_remove(request):
     if request.is_ajax():
-        data = request.session['child']
-        child = Child(**data)
-        child.save()
+        t_id = request.POST['id']
+        t = Todo.objects.get(pk=t_id)
+        t.delete()
+        return HttpResponse("success")
+    pass
 
-        return HttpResponse("miao")
+
+def words_hunter(request):
+    return render(request,"todo/words.html")
 
 
 def api_test(request):
@@ -81,3 +84,27 @@ def references(request):
 
 def music(request):
     return render(request, "todo/music.html")
+
+
+class WordsList(generic.ListView):
+    template_name = "todo/words.html"
+    context_object_name = "words_list"
+
+    def get_queryset(self):
+        return Words.objects.filter(hp__gt=0).all()
+
+
+def add_word(request):
+    if request.is_ajax():
+        w_n = request.POST['word']
+        try:
+            p_w =Words.objects.get(name=w_n)
+            p_w.level += 1
+            p_w.hp += 5
+            p_w.save()
+        except Words.DoesNotExist:
+            n_w = Words(name=w_n)
+            n_w.save()
+            pass
+
+        return HttpResponse("")

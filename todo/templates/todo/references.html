@@ -14,6 +14,10 @@
 
 {% endblock %}
 
+{% block body_class %}
+
+{% endblock %}
+
 {% block mainbody %}
     <section id="vueApp" class="container">
     <table class="">
@@ -57,7 +61,7 @@
 {% block footer %}
     <script>
 
-        $("body").removeClass("custom-background");
+
         let app = new Vue({
             el:"#vueApp",
             data:{

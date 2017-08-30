@@ -2,31 +2,27 @@
  * JavaScript扩展
  * Created by zander on 2017/6/19.
  */
-(function () {
-    let _f = function () {
-
-};
-
-    _f.prototype.range = function (s,e,step=1) {
-
-        if (!e){
-            e = s;
-            s = 0;
+class _{
+    static range(start,end,step=1){
+        if (!end){
+            end = start;
+            start = 0;
         }
         let arr = [];
-        for(let i = s; i < e;i+=step){
+        for(let i = start; i < end;i+=step){
             arr.push(i)
         }
         return arr;
+    }
 
-    };
-
-    _f.prototype.min = function () {
-
-    };
-    window._z =new _f();
-})();
-
+    static randint(f,t,num){
+        let res =[];
+        for(let i =0;i<num;i++){
+            res.push(Math.floor(Math.random()*(f-t)+t))
+        }
+        return res
+    }
+}
 /*格式化字符串*/
 String.prototype.format = function () {
     let that = this;
@@ -90,6 +86,18 @@ Date.prototype.format = function (fmtstr) {
 /*判断数组是否为一维字符数组*/
 Array.prototype.isOneDimString = function () {
     return this.every(x=>typeof(x) === 'string')
+};
+
+Array.prototype.choice = function (num=1,repeat=true,p=null) {
+    // num 数量，repeat是否可重复，p 概率 []
+    let index = _.randint(0,this.length,num);
+    let res = [];
+    let that = this;
+
+    index.forEach(function (x) {
+        res.push(that[x])
+    });
+    return [index,res]
 };
 
 /*判断数组中是否只包含数字*/
@@ -242,5 +250,110 @@ Array.prototype.isNormal = function () {
 Array.prototype.slice2 = function (start=0,end=0,step=1) {
 
 };
+
+
+
+
+class Index{
+    constructor(data){
+        if (data){
+            this.values = data;
+            this.length = data.length
+        }
+    }
+
+    toString(){
+        return "Index([{}])".format(this.values.toString())
+    }
+}
+
+class RangeIndex extends Index{
+    constructor(end){
+        super();
+        this.values = _.range(end);
+        this.length = this.values.length
+    }
+
+    toString(){
+         return "RangeIndex([{}])".format(this.values.toString());
+    }
+}
+
+class Series{
+    constructor(data,index=null,name=null){
+        if(!(data instanceof Array)){
+            throw Error("s")
+        }
+        this.values = data;
+        this.index = index?new Index(index):new RangeIndex(data.length);
+        this.name = name
+    }
+
+    value_counts(){
+
+    }
+
+    concat(){
+        // 拼接两个Series
+    }
+
+    filter(c){
+        // 切片
+        //  TODO index 切片
+        return new Series(this.values.filter(function (x,i) {
+            return c.get(i)
+        }))
+    }
+
+    get(i){
+        return this.values[i]
+    }
+
+    le(num){
+        // <=
+        return new Series(this.values.map(x=>x<=num))
+    }
+    ge(num){
+        // >=
+        return new Series(this.values.map(x=>x>=num))
+    }
+    eq(num){
+        // =
+        return new Series(this.values.map(x=>x===num))
+    }
+    lt(num){
+        // <
+        return new Series(this.values.map(x=>x<num))
+    }
+    gt(num){
+        // >
+        return new Series(this.values.map(x=>x>num))
+    }
+    ne(num){
+        // <>
+        return new Series(this.values.map(x=>x!==num))
+    }
+
+    isNan(){
+
+    }
+
+    isNull(){
+        return new Series(this.values.map(x=>!!x))
+    }
+
+
+}
+
+class DataFrame{
+
+
+}
+
+class Zander{
+
+
+
+}
 
 

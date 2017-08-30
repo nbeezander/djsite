@@ -112,7 +112,7 @@ body{
     border: 1px solid rgba(175, 47, 47, 0.1);
 }
 .filter-wrap{
-    padding: 0 0 10px 20px ;
+    padding: 10px 0 10px 20px ;
 {#    height: 60px;#}
 }
 .filter-group{
@@ -120,8 +120,11 @@ body{
     display: inline-block;
 }
 .active{
-    border: 1px solid rgba(175, 47, 47, 0.2);
+    border: 1px solid rgba(175, 47, 47, 0.4);
     background: none;
+}
+ul{
+    margin-bottom: 0;
 }
 </style>
 {% endblock %}
@@ -131,6 +134,7 @@ body{
 {% endblock %}
 
 {% block mainbody %}
+    {% csrf_token %}
 <section class="container" id="vueApp">
     <div class="row todo-body">
         <div class="col-md-12">
@@ -141,7 +145,7 @@ body{
             </header>
             <div class="main">
                 <ul>
-                    <li v-for="(todo,index) in todos" v-show="todo.show">
+                    <li v-for="(todo,index) in visible_todos">
                         <a href="javascript:" class="toggle" @click="toggle(index)"><i :class="{'icon-ok-circle':todo.state,'icon-circle-blank':!todo.state}"></i></a>
                         <button type="button" class="todo-remove" @click="remove(index)"><i class="icon-remove"></i></button>
                         <p class="todo-content" :class="{'todo-complete':todo.state}">${ todo.content }</p>
@@ -150,9 +154,12 @@ body{
                 <section class="filter-wrap" v-show="todos.length">
                     <span><strong>${ left }</strong> item left</span>
                     <div class="filter-group">
-                        <button type="button" class=" filter active">All</button>
-                        <button type="button" class=" filter">Active</button>
-                        <button type="button" class=" filter">Complete</button>
+                        <input type="radio" hidden id="all" value="all" v-model="visible_state">
+                        <label class="filter" :class="{'active':visible_state == 'all'}" for="all">All</label>
+                        <input type="radio" hidden id="active" value="active" v-model="visible_state">
+                        <label class="filter" :class="{'active':visible_state == 'active'}" for="active">Active</label>
+                        <input type="radio" hidden id="complete" value="complete" v-model="visible_state">
+                        <label class="filter" :class="{'active':visible_state == 'complete'}" for="complete">Complete</label>
                     </div>
                 </section>
             </div>
@@ -167,38 +174,92 @@ body{
 
     </footer>
     <script>
+{#        '{{ todo_list }}'#}
+        let todos = [
+            {% for todo in todo_list %}
+                {
+                    content:'{{ todo.content }}',
+                    state:'{{ todo.state }}'==='True'?1:0,
+                    id:'{{ todo.id }}'
+                },
+            {% endfor %}
+        ];
         let app = new Vue({
             el:"#vueApp",
             data:{
-                todos:[
-                    {content:"为Todo添加数据库映射",state:0,show:1},
-                    {content:"测试爬取非开放网站",state:0,show:1},
-                ],
+                todos:todos,
                 newTodo:"",
+                visible_state:"all"
             },
             methods:{
                 add:function () {
+                    let that = this;
+                    let content = that.newTodo;
                     if(this.newTodo){
-                        this.todos.unshift({
-                            content:this.newTodo,
-                            state:0,
-                            show:1
+                        $.post({
+                            url:"{% url "todo:ajax_add" %}",
+                            data:{
+                                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                                content: content
+                            },
+                            success:function (res) {
+                                let jl = JSON.parse(res)
+                                that.todos.unshift({
+                                    content:content,
+                                    state:0,
+                                    id:jl['id']
+                                });
+                            },
+                            error:function (res) {
+                                console.log(res)
+                            }
                         })
+
+
                     }
-                    this.newTodo=""
+                    that.newTodo=""
                 },
                 remove:function (index) {
-                    this.todos.splice(index,1)
+                    let that = this;
+                    let id = that.todos[index].id;
+
+                    $.post({
+                        url:"{% url "todo:ajax_remove" %}",
+                        data:{
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                            id:id
+                        },
+                        success:function (res) {
+                            that.todos.splice(index,1);
+                        },
+                        error:function (res) {
+                            console.log(res)
+                        }
+                    })
+
                 },
                 toggle:function(index){
-                    this.todos[index].state = this.todos[index].state^1
-                },
-                active:function () {
+                    let that = this;
+                    let id = this.todos[index].id;
+                    let state = this.todos[index].state^1;
+{#                    this.todos[index].state = this.todos[index].state^1;#}
+                    $.post({
+                        url:"{% url "todo:ajax_change_state" %}",
+                        data:{
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                            id:id,
+                            state:state
+                        },
+                        success:function (res) {
+                            that.todos[index].state = state
+                        },
+                        error:function (res) {
+                            console.log(res)
+                        }
+                    })
+
 
                 },
-                completed:function () {
-
-                }
             },
             computed:{
                 left:function () {
@@ -207,7 +268,16 @@ body{
                     });
                     return wt.length
                 },
+                visible_todos:function () {
+                    if (this.visible_state === 'all'){
+                        return this.todos.filter(x=>1)
+                    }else if(this.visible_state === 'active'){
+                        return this.todos.filter(x=>!x.state)
+                    }else if(this.visible_state=== 'complete'){
+                        return this.todos.filter(x=>x.state)
+                    }
 
+                }
             }
 
         })
