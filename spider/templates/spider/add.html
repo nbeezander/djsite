@@ -2,19 +2,10 @@
 
 {% block mainbody %}
     <div class="container">
-        <div class="row">
-            <h2>新增项目{{ method }}</h2>
-        </div>
         <form id="controlForm" method="post" action="{% url 'spider:add' %}">
             {% csrf_token %}
             <div class="row">
-                <button type="submit">提交</button>
-                <button type="button" v-on:click="submit">ajax</button>
-                <button type="button" v-on:click="validateBeforeSubmit">validateBeforeSubmit</button>
-            </div>
-
-            <div class="row">
-                <div class="panel panel-info">
+                <div class="panel panel-primary">
                     <div class="panel-heading">
                         <span>Main Info</span>
                         <div class="pull-right btn-group btn-group-sm">
@@ -38,13 +29,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Allow URL:</label>
-                                <input id="" name="allowUrl"  type="text" v-validate="'required'" :class="{'form-control': true, 'input-danger': errors.has('allowUrl') }" v-model="project.allow_url" title="allowUrl" :placeholder="errors.first('allowUrl')"/>
+                                <input id="" name="allowUrl"  type="text" v-validate="'required'" :class="{'form-control': true, 'input-danger': errors.has('allowUrl') }" v-model="project.allow_url" title="allow url" :placeholder="errors.first('allowUrl')"/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="">Allow URL:</label>
-                                <input type="text" class="form-control" v-model="project.columns">
+                                <input type="text" class="form-control" v-model="project.columns" title="allow url">
                             </div>
                         </div>
                     </div>
@@ -57,7 +48,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="col-md-12">
-                            <table class="table table-bordered  table-striped">
+                            <table class="table table-bordered table-striped">
                                 <thead>
                                 <tr>
                                     <th>URL</th>
@@ -71,12 +62,12 @@
 {#                                        <input type="text" name="project_url" class="form-control" v-model="url.link"/>#}
                                     </td>
                                     <td>
-                                        <a href="javascript:;" v-on:click="del_url(index)"><i class="icon-minus text-danger"></i></a>
+                                        <a href="javascript:" v-on:click="del_url(index)"><i class="icon-minus text-danger"></i></a>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">
-                                        <a href="javascript:;" v-on:click="add_url"><i class="icon-plus"></i>新增一行</a>
+                                        <a href="javascript:" v-on:click="add_url"><i class="icon-plus"></i>新增一行</a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -104,27 +95,27 @@
                                 </thead>
                                 <tbody>
                                 <tr v-for="(rule,index) in rules">
-                                    <td><input type="text" name="project_url" class="form-control" v-model="rule.column"/></td>
-                                    <td><input type="text" name="project_url" class="form-control" v-model="rule.rule"/></td>
+                                    <td><input type="text" name="project_url" class="form-control" title="column" v-model="rule.column"/></td>
+                                    <td><input type="text" name="project_url" class="form-control" title="rule" v-model="rule.rule"/></td>
                                     <td>
-                                        <select class="form-control" v-model="rule.method">
+                                        <select class="form-control" title="method" v-model="rule.method">
                                             <option value="css">css</option>
                                             <option value="xpath">xpath</option>
                                         </select>
                                     </td>
                                     <td>
-                                        <select class="form-control" v-model="rule.extract">
+                                        <select class="form-control" title="extract" v-model="rule.extract">
                                             <option value="extract">extract</option>
                                             <option value="extract_first">extract_first</option>
                                         </select>
                                     </td>
                                     <td>
-                                        <a href="javascript:;" v-on:click="del_rule(index)"><i class="icon-minus text-danger"></i></a>
+                                        <a href="javascript:" v-on:click="del_rule(index)"><i class="icon-minus text-danger"></i></a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="4">
-                                        <a href="javascript:;" v-on:click="add_rule"><i class="icon-plus"></i>新增一行</a>
+                                    <td colspan="5">
+                                        <a href="javascript:" v-on:click="add_rule"><i class="icon-plus"></i>新增一行</a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -139,15 +130,8 @@
 
 {% block footer %}
 <script>
-    Vue.directive('vi',{
-        bind:function (el,bindling,vnode) {
-            console.log(bindling)
-            console.log(vnode.context)
-{#            vnode.add_rule()#}
-        }
-    });
 
-    var mv = new Vue({
+    let mv = new Vue({
         el:"#controlForm",
         data:{
             urls:[
@@ -185,8 +169,8 @@
                 }
             },
             submit:function () {
-                var that = this;
-                var data = {
+                let that = this;
+                let data = {
                     project:that.project,
                     csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
                 };
@@ -224,8 +208,7 @@
                 let that = this;
                 that.rules.forEach(function (item) {
                     str += item.column
-                })
-                console.log(str)
+                });
             }
         }
     })

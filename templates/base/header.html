@@ -8,7 +8,16 @@
                 <span class="pull-right" style="min-width: 20%;min-height: 1px"></span>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="/admin">Admin</a></li>
-                    <li><a href="{% url "todo:references" %}">References</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            Todo
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url "todo:api_words" %}" target="_blank">API_words</a></li>
+                            <li><a href="{% url "todo:words_hunter" %}">hunter</a></li>
+                        </ul>
+                    </li>
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
                             笔记

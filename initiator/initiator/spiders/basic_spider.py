@@ -67,7 +67,7 @@ class BasicSpider(scrapy.Spider):
 
     def close(spider, reason):
         print("hhhhhhhhhh=")
-        self.ws.close()
+        spider.ws.close()
 
 
 
@@ -112,7 +112,6 @@ class ws_client(object):
     def __init__(self):
         # TODO 设置可配置的地址
         self.ws = create_connection("ws://127.0.0.1:8100/spider/echo")
-
 
     def send(self,head,data):
         d = {

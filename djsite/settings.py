@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'm6m$*&zq*=splw9!v8a(kt71p8*wakz17%u3wgi8@gjybexktx'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -40,8 +38,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'polls',  # 添加自定义应用
     'parse',
-    'spider',
-    'todo'
+    'spider',  # 爬虫 数据收集
+    'todo',  #
+    'nlp',  # 自然语言处理
+    'mining',  # 数据挖掘
+    'blog',  # blog
     # 'channels'
 ]
 
@@ -61,7 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'djsite.middle.RequestBeautyMiddleWare'
+    'djsite.middleware.RequestBeautyMiddleWare'
 ]
 
 ROOT_URLCONF = 'djsite.urls'
@@ -84,7 +85,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djsite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -93,17 +93,16 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }
-    'default' : {
-        "ENGINE" : "django.db.backends.mysql",
-        "NAME" : "mysite",
-        "USER" : "root",
-        "PASSWORD" : "wgtamg",
-        "HOST" : "127.0.0.1",
-        "PORT" : '3306'
+    'default': {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "mysite",
+        "USER": "root",
+        "PASSWORD": "wgtamg",
+        "HOST": "127.0.0.1",
+        "PORT": '3306'
 
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -123,7 +122,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -136,7 +134,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = False
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -155,4 +152,22 @@ STATICFILES_DIRS = (
 #         },
 #         "ROUTING": "chat.routing.channel_routing",
 #     },
+# }
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console':{
+#             'level':'DEBUG',
+#             'class':'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'handlers': ['console'],
+#             'propagate': True,
+#             'level':'DEBUG',
+#         },
+#     }
 # }

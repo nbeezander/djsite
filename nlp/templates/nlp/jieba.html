@@ -1,0 +1,115 @@
+{% extends "base/base.html" %}
+
+{% block style %}
+    <style>
+        pre{
+            min-height: 60px;
+            background-color: white;
+            overflow-y: scroll;
+            max-height: 400px;
+            resize: vertical;
+        }
+    </style>
+{% endblock %}
+
+{% block mainbody %}
+    <section class="container" id="vueApp">
+    {% csrf_token %}
+    <div class="panel panel-success" id="">
+        <div class="panel-heading">
+            切词
+            <div class="pull-right">
+                <button type="button" class="btn btn-primary btn-sm" v-on:click="cut_()">提交</button>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="cut_content">输入文本 : </label>
+                    <textarea id="cut_content" class="form-control" style="resize: vertical" v-model="content"></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="extra_dict">自定义词典 : </label>
+                    <textarea id="extra_dict" class="form-control" style="resize: vertical" disabled v-model="local_dict" placeholder="暂不可用"></textarea>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <ul id="myTab" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#cut_words" data-toggle="tab">
+                            中文切词
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#posseg" data-toggle="tab">
+                            词性标注
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#keyWord" data-toggle="tab">
+                            关键词
+                        </a>
+                    </li>
+                </ul>
+                <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade in active" id="cut_words">
+                        <pre>${ cut_result }</pre>
+                    </div>
+                    <div class="tab-pane fade" id="posseg">
+                        <pre>${ posseg }</pre>
+                    </div>
+                    <div class="tab-pane fade" id="keyWord">
+                        <pre>${ key_word }</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </section>
+{% endblock %}
+
+{% block footer %}
+    <script>
+        let app = new Vue({
+            el:"#vueApp",
+            data:{
+                content:"",
+                local_dict:"",
+                cut_result:"",
+                posseg: "",
+                key_word : ""
+            },
+            methods:{
+                cut_:function () {
+                    let that = this;
+                    $.post({
+                        url:"{% url "nlp:jieba_app" %}",
+                        data:{
+                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
+                            content:that.content
+                        },
+                        success:function (res) {
+                            let json = JSON.parse(res);
+                            console.log(json);
+                            that.cut_result = json['cut'];
+                            that.posseg = json['pseg'];
+                            that.key_word = json['key']
+                        },
+                        error:function (res) {
+                            console.log(res)
+                        }
+                    })
+
+                }
+
+            }
+        })
+
+    </script>
+
+{% endblock %}

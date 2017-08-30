@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ title|default:_("Something is changing")  }}</title>
+    <title>{{ title|default:_("Miaow")  }}</title>
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "frame/bootstrap-3.3.7-dist/css/bootstrap.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "frame/Font-Awesome-3.2.1/css/font-awesome.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/main.css" %}">
     <link rel="icon" href="{% static "imgs/favicon.ico" %}">
+    {% block style %}
+
+
+    {% endblock %}
+
 </head>
-<body class="custom-background">
+<body class="{% block body_class %}custom-background{% endblock %}">
 {% block header %}
 {% include "base/header.html" %}
 {% endblock %}

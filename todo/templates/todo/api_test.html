@@ -1,0 +1,126 @@
+{% extends "base/base.html" %}
+
+{% block mainbody %}
+    <section class="container" id="app">
+        <div class="row">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    API调试工具
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <select title="" name="" class="form-control" id="" v-model="type">
+                                <option v-for="method in methods">${ method }</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" title="" placeholder="url" v-model="url" class="form-control"/>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary" v-on:click="send">AJAX</button>
+                                <button type="button" class="btn btn-primary" v-on:click="request">Request</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Data
+                </div>
+                <div class="panel-body">
+
+
+                    <div class="row">
+                        <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Data</label>
+                            <textarea title="" style="resize: vertical" rows="15" v-model="ajax_data" class="form-control"></textarea>
+                        </div>
+                    </div>
+                        <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="">Response</label>
+                            <textarea style="resize: vertical" class="form-control" title="" rows="15" v-model="response"></textarea>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="">Content-Type</label>
+                                <select name="" id=""  v-model="contentType" class="form-control">
+                                    <option value=""></option>
+                                    <option value="application/json">application/json</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block footer %}
+<script>
+    let app = new Vue({
+        el:"#app",
+        data:{
+            url:"http://localhost:8082/api/area!list.action",
+            methods:['GET', 'POST'],
+            contentType:"",
+            type:"GET",
+            ajax_data:`
+{
+    "province":"北京市",
+    "city":"西城区"
+}
+            `,
+            response:""
+        },
+        methods:{
+            send:function () {
+                let that = this;
+                let d;
+                if (that.ajax_data){
+                    d = JSON.parse(that.ajax_data);
+                }else{
+                    d = {}
+                }
+                if(that.contentType === "application/json"){
+                    d = JSON.stringify(d)
+                }
+
+                $.ajax({
+                    url:that.url,
+                    type:that.type,
+                    data:d,
+                    contentType:that.contentType,
+                    success:function (res) {
+                        that.response = res;
+                    },
+                    error:function (res) {
+                        that.response = res;
+                    }
+                })
+
+
+            },
+            request:function () {
+                let that = this;
+                window.alert("暂未实现")
+
+            }
+        }
+
+    })
+
+</script>
+{% endblock %}

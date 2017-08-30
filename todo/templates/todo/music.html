@@ -1,0 +1,61 @@
+{% extends "base/base.html" %}
+
+{% block style %}
+    <meta name="description" content="HTML5 Audio Spectrum Visualizer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html, body {
+            margin: 0;
+            font-family: arial, "Microsoft YaHei";
+            background-color: #272822;
+            color: #FEFEFE;
+        }
+        #fileWrapper{
+            transition:all 0.5s ease;
+        }
+        #fileWrapper:hover{
+            opacity: 1!important;
+        }
+
+        #visualizer_wrapper{
+            text-align: center;
+        }
+        footer{
+            position: fixed;
+            bottom: 2px;
+            color:#aaa;
+        }
+    </style>
+{% endblock %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block mainbody %}
+    <div id="wrapper">
+        <div id="fileWrapper" class="file_wrapper">
+            <div class="form-inline" style="background-color: inherit">
+                <label for="uploadedFile" class="control-label">Drag&drop or select a file to play:</label>
+                <input type="file" id="uploadedFile" class="form-control" style="background-color: inherit;border: none"/>
+            </div>
+        </div>
+        <div id="visualizer_wrapper">
+            <canvas id='canvas' width="800" height="350"></canvas>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;font-size: 2.5em">
+            <div id="info">
+                HTML5 Audio API showcase | An Audio Viusalizer
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+{% load static %}
+        <script type="text/javascript" src="{% static "js/html5_audio_visualizer.js" %}"></script>
+    <script>
+        $("body").removeClass("custom-background")
+    </script>
+{% endblock %}

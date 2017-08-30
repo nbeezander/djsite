@@ -12,6 +12,7 @@
 {% endblock %}
 {% block mainbody %}
     <section class="container" id="vueApp">
+    {% csrf_token %}
         <div class="row">
 
             <div class="col-md-2 col-md-offset-10">
@@ -110,9 +111,9 @@ function getItem() {
 
 let app = new Vue({
     "el":"#vueApp",
-    beforeCreate:function() {
+    mounted:function() {
         let that = this;
-        that.$http({method:"get",url:"api_words.json"}).then(function (res) {
+        that.$http({method:"get",url:"api_words/?format=json"}).then(function (res) {
             that.words = res.body;
             that.arena = that.words.choice(1)[1][0];
         })
@@ -132,56 +133,73 @@ let app = new Vue({
             if (that.coin < that.word_cost){
                 return
             }
+            $.post({
+                url:"{% url "todo:api_words" %}",
+                data:{
+                    word:that.word,
+                    csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                },
+                success:function (res) {
+                    that.words = res;
+                    that.arena = that.words.choice(1)[1][0];
+                },
+                error:function (res) {
+                    console.log(res)
+                }
+            });
 
-            if(that.words.some(x=>x['name']===that.word)){
-                that.words.map(function (x) {
-                    if(x['name'] === that.word){
-                        x['level'] += 1;
-                        x['hp'] += that.level_hp
-                    }
-                })
-            }else{
-                that.words.push({name:that.word,level:1,hp:that.level_hp})
-            }
+
             that.coin -= that.word_cost;
             that.word = "";
-            localStorage.setItem("words",JSON.stringify(that.words));
+{#            localStorage.setItem("words",JSON.stringify(that.words));#}
             localStorage.setItem("coin",that.coin)
             $('#add_word').modal('hide')
         },
         attack:function () {
             let that = this;
-            let i = that.arena['index']
-            this.words[i]['hp'] -=1;
-            this.health += 1;
 
-            localStorage.setItem("words",JSON.stringify(that.words));
+            $.post({
+                url:"words/{}/".format(that.arena['id']),
+                data:{
+                    id:that.arena['id'],
+                    hp:that.arena['hp']-1,
+                    word:that.arena['word'],
+                    csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                },
+                success:function (res) {
+{#                    that.arena['hp'] -=1;#}
+                    that.words = res;
+                    that.health += 1;
+                    that.arena = that.words.choice(1)[1][0];
+                },
+                error:function (res) {
+                    console.log(res)
+                }
+            });
             localStorage.setItem("health",this.health);
-            let index = this.words.choice(1)[0][0];
-            this.arena = {
-                index:index,
-                name:that.words[index]['name'],
-                level:that.words[index]['level'],
-                hp:that.words[index]['hp']
-            }
         },
         defend:function () {
             let that = this;
-            let i = that.arena['index'];
-            this.words[i]['hp'] +=1;
-            this.health -=1;
-            if(this.health <= 0){
-                console.log("die")
-            }
-            localStorage.setItem("words",JSON.stringify(that.words));
-            localStorage.setItem("health",this.health)
-            let index = this.words.choice(1)[0][0];
-            this.arena = {
-                index:index,
-                name:that.words[index]['name'],
-                level:that.words[index]['level'],
-                hp:that.words[index]['hp']
-            }
+
+            $.post({
+                url:"words/{}/".format(that.arena['id']),
+                data:{
+                    id:that.arena['id'],
+                    hp:that.arena['hp']+1,
+                    word:that.arena['word'],
+                    csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+                },
+                success:function (res) {
+{#                    that.arena['hp'] -=1;#}
+                    that.words = res;
+                    that.health -= 1;
+                    that.arena = that.words.choice(1)[1][0];
+                },
+                error:function (res) {
+                    console.log(res)
+                }
+            });
+            localStorage.setItem("health",this.health);
         },
     },
     computed:{
