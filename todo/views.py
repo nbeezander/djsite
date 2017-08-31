@@ -108,3 +108,11 @@ def add_word(request):
             pass
 
         return HttpResponse("")
+
+
+def question(request):
+    return render(request,"todo/1-Q.html")
+
+
+def keyboard(request):
+    return  render(request, "todo/keyboard.html")

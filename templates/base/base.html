@@ -15,6 +15,7 @@
 
 </head>
 <body class="{% block body_class %}custom-background{% endblock %}">
+{% csrf_token %}
 {% block header %}
 {% include "base/header.html" %}
 {% endblock %}
@@ -27,12 +28,15 @@
 <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
 <script src="{% static "frame/bootstrap-3.3.7-dist/js/bootstrap.js" %}"></script>
 <script src="{% static "js/vue.min.js" %}"></script>
-<script src="{% static "js/vee-validate.js" %}"></script>
+{#<script src="{% static "js/vee-validate.js" %}"></script>#}
 <script src="{% static "js/main.js" %}"></script>
 <script src="{% static "js/admin.js" %}"></script>
+<script src="{% static "js/vue-resource.js" %}"></script>
 <script>
     Vue.options.delimiters  = ["${","}"];
-    Vue.use(VeeValidate)
+{#    Vue.use(VeeValidate);#}
+    Vue.http.headers.common['X-CSRFToken']  = $("[name='csrfmiddlewaretoken']").val();
+    Vue.http.options.emulateJSON = true;
 </script>
 {% block script %}{% endblock %}
 {% block footer %}{% endblock %}

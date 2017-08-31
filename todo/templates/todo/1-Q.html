@@ -1,7 +1,9 @@
 {% extends "base/base.html" %}
 
 {% block style %}
+<style>
 
+</style>
 {% endblock %}
 
 {% block body_class %}
@@ -9,5 +11,112 @@
 {% endblock %}
 
 {% block mainbody %}
+<section class="container" id="vueApp">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3" style="text-align:center">
+            <h1>Question</h1>
+            <hr>
+            <p style="width: 100%;margin-bottom: 200px">${ question?question.desc:"no data" }</p>
 
+            <button type='button' data-toggle="modal" data-target="#answer" :disabled="!question" class="btn btn-info">Answer This</button>
+            <div class="modal fade" id="answer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                Answer
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" placeholder="answer" class="form-control" spellcheck="false" v-model="question.answer" @keyup.13="update">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+                            <button type="button" class="btn btn-primary" @click="update">ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type='button' data-toggle="modal" data-target="#newQuestion" class="btn btn-info">New Question</button>
+            <div class="modal fade" id="newQuestion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                New Question
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" placeholder="new question" class="form-control" spellcheck="false" v-model="n_question.desc" @keyup.13="create">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+                            <button type="button" class="btn btn-primary" @click="create">ok</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script>
+let app = new Vue({
+    el:"#vueApp",
+    mounted:function () {
+        this.last_question()
+    },
+    data:{
+        question:"",
+        n_question:{
+            desc:""
+        }
+    },
+    methods:{
+        create:function () {
+            let that = this;
+            if(!that.n_question.desc){
+                return
+            }
+            that.$http.post("{% url "todo:create_question" %}",that.n_question)
+                .then(res=>{
+                    that.question = res.body;
+                    $("#newQuestion").modal("hide")
+                })
+        },
+        update:function () {
+            let that = this;
+            if(!that.question.answer){
+                return
+            }
+            that.question.state = true;
+            that.$http.post("question/{}/".format(that.question.id),that.question)
+                .then(res=>{
+                    that.last_question();
+                    $("#answer").modal("hide")
+                })
+        },
+        last_question:function () {
+            let that = this;
+            this.$http.get("{% url "todo:last_question" %}")
+                .then(res=>{
+                    if(res.body.length){
+                      that.question = res.body[0]
+                    }else{
+                        that.question = ""
+                    }
+            })
+        }
+    }
+
+})
+</script>
 {% endblock %}

@@ -88,6 +88,24 @@ Array.prototype.isOneDimString = function () {
     return this.every(x=>typeof(x) === 'string')
 };
 
+/*展开数组为一维*/
+Array.prototype.ravel = function () {
+    return this.reduce(function (x,y) {
+        if(y instanceof Array){
+            x = x.concat(y.ravel())
+        }else{
+            x.push(y)
+        }
+        return x
+    },[])
+};
+
+/**
+ * 从数组中选取指定数量的元素
+ * num(int)    :  数量(default 1)
+ * repeat(bool):  是否可重复(暂未实现)
+ * p(array)    :  每个元素出现的概率(与数组大小相等的概率数组，暂未实现)
+ */
 Array.prototype.choice = function (num=1,repeat=true,p=null) {
     // num 数量，repeat是否可重复，p 概率 []
     let index = _.randint(0,this.length,num);
@@ -107,9 +125,9 @@ Array.prototype.isDigits = function () {
 
 /*返回数组中的最小值*/
 Array.prototype.min = function () {
-    if (this.isDigits()){
-        // TODO 展开 ravel
-        return this.reduce((x,y)=>x<y?x:y)
+    let that = this.ravel();
+    if (that.isDigits()){
+        return that.reduce((x,y)=>x<y?x:y)
     }else{
         throw Error("must be digits array")
     }
@@ -117,9 +135,9 @@ Array.prototype.min = function () {
 
 /*返回数组中的最大值*/
 Array.prototype.max = function () {
-    if (this.isDigits()){
-        // TODO 展开 ravel
-        return this.reduce((x,y)=>x>y?x:y)
+    let that = this.ravel();
+    if (that.isDigits()){
+        return that.reduce((x,y)=>x>y?x:y)
     }else{
         throw Error("must be digits array")
     }
@@ -139,11 +157,6 @@ Array.prototype.repeat = function (n) {
         na = na.concat(this)
     }
     return na;
-};
-
-/*展开数组为一维*/
-Array.prototype.ravel = function () {
-
 };
 
 
@@ -194,6 +207,7 @@ Array.prototype.zip = function (val) {
     if(!(val instanceof Array)){
         throw Error("{} is not Array".format(val))
     }
+    //当前对象必须为一维字符数组
     if (!this.isOneDimString()){
         throw Error("key array should be one dim string array")
     }
@@ -237,7 +251,7 @@ Array.prototype.align = function (other,cut=false) {
     },[])
 };
 
-/*延长数组到指定长度*/
+/*延长数组到指定长度，依次使用前面的元素补充*/
 Array.prototype.prolong = function (n) {
     return this.repeat(Math.floor(n/this.length) + 1).splice(0,n);
 };

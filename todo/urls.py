@@ -15,9 +15,16 @@ urlpatterns = [
     url(r'^references$', views.references, name='references'),
     url(r'^nlp', views.api_test, name='nlp'),
     url(r'^music$', views.music, name='music'),
+    url(r'^q$', views.question, name='question'),
+    url(r'^keyboard$', views.keyboard, name='keyboard'),
     url(r'^search$', views.todoFilter, name='search'),
     url(r'^words_hunter', views.words_hunter, name='words_hunter'),
     url(r'^api_words/$', api.WordsViewSet.as_view(),name="api_words"),
     url(r'^words/(?P<pk>[0-9]+)/$', api.WordDetail.as_view(),name="api_detail"),
+    url(r'^words_random/$', api.WordsRandom.as_view(),name="words_random"),
+    url(r'^questions/$', api.QuestionList.as_view(),name="questions"),
+    url(r'^question/(?P<pk>[0-9]+)/$', api.GetOrUpdateQuestion.as_view(),name="get_update_question"),
+    url(r'^last_question/$', api.LastQuestion.as_view(),name="last_question"),
+    url(r'^create_question/$', api.CreateQuestion.as_view(),name="create_question"),
 
 ]

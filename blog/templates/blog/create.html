@@ -105,7 +105,7 @@
         <div class="col-md-8">
             <div class="form-group">
                 <label for="article_title">标题:</label>
-                <input type="text" id="article_title" v-model="article.title" class="form-control"/>
+                <input type="text" spellcheck="false" id="article_title" v-model="article.title" class="form-control"/>
             </div>
         </div>
     </div>
@@ -220,7 +220,7 @@ $(function () {
 
     $("#eTab").on('click',function () {
         tab(node[0])
-    })
+    });
 
     $("#eB").on('click',function () {
         bold(node[0]);
@@ -501,7 +501,7 @@ function baseEdit(obj,indent,def,l,r) {
     obj.setSelectionRange(start+l, start
             + l+pl);
 
-    app.article.content = obj.value
+    app.article.content = obj.value;
     obj.focus()
 }
 

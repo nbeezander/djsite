@@ -171,7 +171,7 @@ def csv_download(request):
 
 def pic_upload(request):
     """
-    文件上传
+    文件上传:图片
     :param request: 请求信息
     :return: 保存路径
     """

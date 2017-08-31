@@ -16,11 +16,11 @@ class Todo(models.Model):
 
 class Question(models.Model):
     # 未make ，make之后删除该注释，，长度限制(i)，，markdown(i)
-    question = models.CharField(verbose_name="问题", max_length=255)
+    desc = models.CharField(verbose_name="问题", max_length=255)
     in_time = models.DateTimeField(verbose_name="添加时间", auto_now_add=True)
     re_time = models.DateTimeField(verbose_name="解决时间", auto_now=True)
     state = models.BooleanField(verbose_name="状态", default=False)
-    answer = models.CharField(verbose_name="答案", max_length=255)
+    answer = models.CharField(verbose_name="答案", max_length=255,null=True,blank=True)
 
     # class Child(models.Model):
     #     parent = models.ForeignKey(Todo,verbose_name="Todo")

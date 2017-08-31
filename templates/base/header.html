@@ -10,12 +10,24 @@
                     <li><a href="/admin">Admin</a></li>
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                            API
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url "todo:questions" %}" target="_blank">Question</a></li>
+                            <li><a href="{% url "todo:last_question" %}" target="_blank">Last Question</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
                             Todo
                             <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url "todo:api_words" %}" target="_blank">API_words</a></li>
                             <li><a href="{% url "todo:words_hunter" %}">hunter</a></li>
+                            <li><a href="{% url "todo:question" %}">Question</a></li>
+                            <li><a href="{% url "todo:keyboard" %}">Keyboard</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
