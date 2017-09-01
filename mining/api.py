@@ -6,10 +6,14 @@ from .models import Resource, Type
 from rest_framework import generics,serializers
 
 
-class TypeSerializers(serializers.HyperlinkedModelSerializer):
+class TypeSerializers(serializers.ModelSerializer):
+
+    resources = serializers.StringRelatedField(many=True)
+
     class Meta:
         model = Type
-        fields = ['id','name']
+
+        fields = ('id','name','resources')
 
 
 class TypeList(generics.ListAPIView):

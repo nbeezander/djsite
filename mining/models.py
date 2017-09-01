@@ -19,7 +19,7 @@ class Resource(models.Model):
     doc = models.TextField(max_length=2048, verbose_name="文档", null=True, blank=True)
     note = models.CharField(max_length=2048, verbose_name="笔记", null=True, blank= True)
     example = models.CharField(max_length=2048, verbose_name="示例", null=True, blank=True)
-    type = models.ForeignKey(Type, verbose_name="类型")
+    type = models.ForeignKey(Type, verbose_name="类型",related_name="resources")
     inTime = models.DateTimeField(verbose_name='收录日期', auto_now_add=True)
 
     def __str__(self):
