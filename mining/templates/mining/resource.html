@@ -1,15 +1,12 @@
 {% extends "base/base.html" %}
 
-{% block header %}
-
-{% endblock %}
 
 {% block body_class %}
 
 {% endblock %}
 
 {% block mainbody %}
-    <section class="container">
+    <section class="container" id="vueApp">
 
     <div class="row" style="min-height: 100px">
         <div class="col-md-12">
@@ -18,6 +15,65 @@
         <div class="col-md-2 col-md-offset-10">
             <div class="btn-group">
                 <a href="../admin/mining/resource/add/" class="btn btn-info">新增</a>
+                <button type='button' data-toggle="modal" data-target="#new"></button>
+                <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title" id="myModalLabel">
+                                    新增资源
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <form action="" class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                    <label for="type" class="col-sm-2 control-label">
+                                        类型：
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <select name="" class="form-control" id="type" v-model="resource.type">
+                                            {% for type in type_list %}
+                                                <option value="{{ type.id }}">{{ type.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                    <div class="form-group">
+                                        <label for="name" class="col-sm-2 control-label">
+                                            名称:
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="name" class="form-control" v-model="resource.name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="intro" class="col-sm-2 control-label">
+                                            简介:
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="intro" class="form-control" v-model="resource.intro">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="link" class="col-sm-2 control-label">
+                                            链接:
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input type="text" id="link" class="form-control" v-model="resource.link">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+                                <button type="button" class="btn btn-primary" @click="create">submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -46,8 +102,26 @@
 
 {% block footer %}
     <script>
-        $(function () {
-
+        let app = new Vue({
+            el:"#vueApp",
+            data:{
+                resource:{
+                    type:"",
+                    name:"",
+                    intro:"",
+                    link:""
+                }
+            },
+            methods:{
+                create:function () {
+                    let that = this;
+                    that.$http.post("{% url "mining:resource_create" %}",that.resource)
+                        .then(res=>{
+                            console.log(res)
+                            $("#new").modal("hide")
+                        })
+                }
+            }
         })
     </script>
 

@@ -32,39 +32,6 @@ def todoFilter(request):
         return HttpResponse()
 
 
-def ajax_add(request):
-    if request.is_ajax():
-        data = request.POST['content']
-        n_todo = Todo(content=data)
-        n_todo.save()
-        return HttpResponse(json.dumps({"id":n_todo.id}))
-
-
-def ajax_change_state(request):
-    if request.is_ajax():
-        t_id = request.POST['id']
-        state = request.POST['state'] == "1"
-        t = Todo.objects.get(pk=t_id)
-        t.state = state
-        t.save()
-        return HttpResponse("success")
-
-
-def ajax_edit(request, todo_id):
-    t = get_object_or_404(Todo,pk=todo_id)
-    print(t)
-    return HttpResponse("fff")
-
-
-def ajax_remove(request):
-    if request.is_ajax():
-        t_id = request.POST['id']
-        t = Todo.objects.get(pk=t_id)
-        t.delete()
-        return HttpResponse("success")
-    pass
-
-
 def words_hunter(request):
     return render(request,"todo/words.html")
 
@@ -84,30 +51,6 @@ def references(request):
 
 def music(request):
     return render(request, "todo/music.html")
-
-
-class WordsList(generic.ListView):
-    template_name = "todo/words.html"
-    context_object_name = "words_list"
-
-    def get_queryset(self):
-        return Words.objects.filter(hp__gt=0).all()
-
-
-def add_word(request):
-    if request.is_ajax():
-        w_n = request.POST['word']
-        try:
-            p_w =Words.objects.get(name=w_n)
-            p_w.level += 1
-            p_w.hp += 5
-            p_w.save()
-        except Words.DoesNotExist:
-            n_w = Words(name=w_n)
-            n_w.save()
-            pass
-
-        return HttpResponse("")
 
 
 def question(request):
