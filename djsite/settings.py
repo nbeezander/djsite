@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',  # 消息框架
     'django.contrib.staticfiles',  # 管理静态文件的框架
     'rest_framework',
-    'polls',  # 添加自定义应用
+    # 'polls',  # 添加自定义应用
     'parse',
     'spider',  # 爬虫 数据收集
     'todo',  #

@@ -3,7 +3,7 @@
 # api.py create by zander on 2017/8/30 16:54
 from rest_framework import routers, serializers, viewsets
 from rest_framework import mixins, generics
-from .models import Words, Question
+from .models import Words, Question, Todo
 from numpy.random import randint
 
 
@@ -89,3 +89,35 @@ class GetOrUpdateQuestion(generics.UpdateAPIView, generics.RetrieveAPIView):
 class QuestionList(generics.ListAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+
+class TodoAPI(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Todo
+        fields = ['id','content','state','create_time']
+
+
+class TodoList(generics.ListAPIView):
+    queryset = Todo.objects.order_by('-create_time').all()
+    serializer_class = TodoAPI
+
+
+class NewTodo(generics.CreateAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoAPI
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class GetOrUpdateTodo(generics.UpdateAPIView, generics.RetrieveAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoAPI
+
+    def post(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+
+class DeleteTodo(generics.DestroyAPIView):
+    queryset = Todo.objects.all()
+    serializer_class = TodoAPI

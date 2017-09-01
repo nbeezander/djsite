@@ -16,17 +16,16 @@ Including another URLconf
 from django.conf.urls import url,include
 from django.contrib import admin
 from django.shortcuts import render
-from todo import views
 
 
 def index(request):
-    return render(request, "index.html")
+    return render(request, "todo.html")
 
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name="index"),
+    url(r'^$', index, name="index"),
     url(r'^admin/', admin.site.urls),
-    url(r'^polls/', include('polls.urls', namespace="polls")),
+    # url(r'^polls/', include('polls.urls', namespace="polls")),
     url(r'^parse/', include('parse.urls', namespace="parse")),
     url(r'^spider/', include('spider.urls', namespace="spider")),
     url(r'^todo/', include('todo.urls', namespace="todo")),

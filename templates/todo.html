@@ -134,13 +134,12 @@ ul{
 {% endblock %}
 
 {% block mainbody %}
-    {% csrf_token %}
 <section class="container" id="vueApp">
     <div class="row todo-body">
         <div class="col-md-12">
             <header class="todo-header">
                 <h1>todos</h1>
-                <input type="text" class="new-todo" autocomplete="off" v-model="newTodo" @keyup.13="add" autofocus placeholder="What`s need to be done?">
+                <input type="text" class="new-todo" autocomplete="off" v-model="newTodo.content" @keyup.13="add" autofocus placeholder="What`s need to be done?">
                 <button type="button" class="sign" v-show="todos.length"><i class="icon-angle-down"></i></button>
             </header>
             <div class="main">
@@ -174,92 +173,58 @@ ul{
 
     </footer>
     <script>
-{#        '{{ todo_list }}'#}
-        let todos = [
-            {% for todo in todo_list %}
-                {
-                    content:'{{ todo.content }}',
-                    state:'{{ todo.state }}'==='True'?1:0,
-                    id:'{{ todo.id }}'
-                },
-            {% endfor %}
-        ];
         let app = new Vue({
             el:"#vueApp",
+            mounted:function () {
+                this.list()
+            },
             data:{
-                todos:todos,
-                newTodo:"",
+                todos:[],
+                newTodo:{
+                    content:"",
+                    state:false
+                },
                 visible_state:"all"
             },
             methods:{
                 add:function () {
                     let that = this;
                     let content = that.newTodo;
-                    if(this.newTodo){
-                        $.post({
-                            url:"{% url "todo:ajax_add" %}",
-                            data:{
-                                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                                content: content
-                            },
-                            success:function (res) {
-                                let jl = JSON.parse(res)
-                                that.todos.unshift({
-                                    content:content,
-                                    state:0,
-                                    id:jl['id']
-                                });
-                            },
-                            error:function (res) {
-                                console.log(res)
-                            }
-                        })
-
-
+                    if(!this.newTodo.content){
+                        return
                     }
-                    that.newTodo=""
+                    that.$http.post("{% url "todo:new_todo" %}",that.newTodo)
+                        .then(res=>{
+                            that.todos.unshift(res.body);
+                            that.newTodo.content = ""
+                        });
+
                 },
                 remove:function (index) {
                     let that = this;
-                    let id = that.todos[index].id;
-
-                    $.post({
-                        url:"{% url "todo:ajax_remove" %}",
-                        data:{
-                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                            id:id
-                        },
-                        success:function (res) {
-                            that.todos.splice(index,1);
-                        },
-                        error:function (res) {
-                            console.log(res)
-                        }
-                    })
-
+                    let todo = that.todos[index];
+                    that.$http.delete("todo/delete_todo/{}/".format(todo.id),todo)
+                        .then(res=>{
+                            that.list()
+                        });
                 },
                 toggle:function(index){
                     let that = this;
-                    let id = this.todos[index].id;
-                    let state = this.todos[index].state^1;
-{#                    this.todos[index].state = this.todos[index].state^1;#}
-                    $.post({
-                        url:"{% url "todo:ajax_change_state" %}",
-                        data:{
-                            csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val(),
-                            id:id,
-                            state:state
-                        },
-                        success:function (res) {
-                            that.todos[index].state = state
-                        },
-                        error:function (res) {
-                            console.log(res)
-                        }
-                    })
-
-
+                    let todo = that.todos[index];
+                    let id = todo.id;
+                    todo.state = !todo.state;
+                    that.$http.post("todo/{}/".format(id),todo)
+                        .then(res=>{
+                            todo = res.body
+                        });
                 },
+                list:function () {
+                    let that = this;
+                    that.$http.get("{% url "todo:todo_list" %}")
+                        .then(res=>{
+                            that.todos = res.body
+                        })
+                }
             },
             computed:{
                 left:function () {
@@ -279,9 +244,6 @@ ul{
 
                 }
             }
-
         })
-
-
     </script>
 {% endblock %}

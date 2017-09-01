@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^questions/$', api.QuestionList.as_view(),name="questions"),
     url(r'^question/(?P<pk>[0-9]+)/$', api.GetOrUpdateQuestion.as_view(),name="get_update_question"),
     url(r'^last_question/$', api.LastQuestion.as_view(),name="last_question"),
-    url(r'^create_question/$', api.CreateQuestion.as_view(),name="create_question"),
-
+    url(r'^todo_list/$', api.TodoList.as_view(),name="todo_list"),
+    url(r'^new_todo/$', api.NewTodo.as_view(),name="new_todo"),
+    url(r'^(?P<pk>[0-9]+)/$', api.GetOrUpdateTodo.as_view(),name="get_update_todo"),
+    url(r'^delete_todo/(?P<pk>[0-9]+)/$', api.DeleteTodo.as_view(),name="delete_todo"),
 ]

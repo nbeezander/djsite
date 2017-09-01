@@ -90,7 +90,7 @@ Array.prototype.isOneDimString = function () {
 
 /*展开数组为一维*/
 Array.prototype.ravel = function () {
-    return this.reduce(function (x,y) {
+    return this.reduce((x,y)=>{
         if(y instanceof Array){
             x = x.concat(y.ravel())
         }else{
@@ -261,8 +261,9 @@ Array.prototype.isNormal = function () {
     return this.every(x=>!x && typeof (x)!=='object')
 };
 
-Array.prototype.slice2 = function (start=0,end=0,step=1) {
-
+/*切片[s:e:t]*/
+Array.prototype.slice2 = function (start,end,step=1) {
+    return this.slice(start,end).filter((x,y)=>y%step === 0)
 };
 
 
