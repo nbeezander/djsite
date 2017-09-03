@@ -34,7 +34,7 @@
                                         类型：
                                     </label>
                                     <div class="col-sm-10">
-                                        <select name="" class="form-control" id="type" v-model="resource.type">
+                                        <select name="" class="form-control" id="type" v-model="resource.type_id">
                                             {% for type in type_list %}
                                                 <option value="{{ type.id }}">{{ type.name }}</option>
                                             {% endfor %}
@@ -87,7 +87,7 @@
             {{ type.name }}
         </h4>
         <ul>
-        {% for resource in type.resource_set.all %}
+        {% for resource in type.resources.all %}
         <li>
             <a href="{{ resource.link }}" target="_blank">{{ resource.name }}</a>
             : {{ resource.intro }} </li>
@@ -106,7 +106,7 @@
             el:"#vueApp",
             data:{
                 resource:{
-                    type:"",
+                    type_id:"",
                     name:"",
                     intro:"",
                     link:""
