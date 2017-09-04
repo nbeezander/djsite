@@ -205,7 +205,7 @@ ul{
                     let todo = that.todos[index];
                     that.$http.delete("todo/delete_todo/{}/".format(todo.id),todo)
                         .then(res=>{
-                            that.list()
+                            that.todos.remove(index)
                         });
                 },
                 toggle:function(index){

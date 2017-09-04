@@ -21,6 +21,7 @@ class TypeList(generics.ListAPIView):
     queryset = Type.objects.all()
     serializer_class = TypeSerializers
 
+
 class TypeDetail(generics.RetrieveAPIView):
     queryset = Type.objects.all()
     serializer_class = TypeSerializers

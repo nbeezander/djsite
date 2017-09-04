@@ -32,6 +32,9 @@ String.prototype.format = function () {
     if (arguments.length === 1 && typeof arguments[0] === 'object'){
         let args = arguments[0];
         for(let key in args){
+            if (!args.hasOwnProperty(key)){
+                continue
+            }
             let reg = new RegExp("({"+key+"})","g");
             that = that.replace(reg,args[key])
         }
@@ -157,38 +160,6 @@ Array.prototype.repeat = function (n) {
         na = na.concat(this)
     }
     return na;
-};
-
-
-/*判断数据是否满足矩阵格式*/
-Array.prototype.isMatrix = function () {
-
-};
-
-/*获取数组的维度*/
-Array.prototype.dims = function () {
-
-
-};
-
-
-/**/
-Array.prototype.reshape = function () {
-
-};
-
-/**/
-Array.prototype.shape = function () {
-
-};
-
-/*  */
-Array.prototype.size = function () {
-
-};
-
-Array.prototype.width = function () {
-      this.reduce()
 };
 
 /*删除指定索引 返回原数组*/
