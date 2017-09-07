@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'^nlp/', include('nlp.urls', namespace="nlp")),
     url(r'^mining/', include('mining.urls', namespace="mining")),
     url(r'^blog/', include('blog.urls', namespace="blog")),
+    url(r'^api/', include('api.urls', namespace="api")),
 ]

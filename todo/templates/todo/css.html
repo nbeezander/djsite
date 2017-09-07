@@ -1,0 +1,74 @@
+{% extends "base/base.html" %}
+
+{% block style %}
+<style>
+.block{
+    margin: 0 10px 20px 10px;
+    float: left;
+}
+.one{
+    border: 1px solid greenyellow;
+    border-radius: 50%;
+    width: 260px;
+    height: 260px;
+}
+.two{
+    width: 260px;
+    height: 260px;
+    border-radius: 100% 0 0 0;
+    border-top: 130px solid chartreuse;
+    border-left: 1px solid chartreuse;
+}
+.three{
+    width: 260px;
+    height: 260px;
+    border-bottom: 260px solid #62e08b;
+    border-left: 130px solid transparent;
+    border-right: 130px solid transparent;
+}
+.four{
+    width: 260px;
+    height: 260px;
+    transform: rotate(45deg);
+    background-color: turquoise;
+}
+.five{
+    width: 250px;
+    height: 250px;
+{#    border-bottom: 10px solid greenyellow;#}
+{#    border-left: 10px solid darkgreen;#}
+    border-radius: 50%;
+    box-shadow:
+            -10px 0 turquoise, /*左边阴影*/
+    10px 0  chartreuse, /*右边阴影*/
+    0 -10px  turquoise, /*顶部阴影*/
+    0 10px  chartreuse; /*底边阴影*/
+{#    -20px -10px red,#}
+{#    20px -10px red,#}
+{#    -10px -20px red,#}
+{#    -10px 20px red;#}
+}
+
+</style>
+{% endblock %}
+{% block body_class %}
+
+{% endblock %}
+{% block mainbody %}
+    <section class="container">
+    <div class="one block">
+
+    </div>
+    <div class="two block">
+
+    </div>
+    <div class="three block">
+
+    </div>
+    <div class="block" style="overflow: hidden">
+        <div class="four"></div>
+    </div>
+
+    <div class="five block"></div>
+    </section>
+{% endblock %}

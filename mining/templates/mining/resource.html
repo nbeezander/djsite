@@ -9,76 +9,73 @@
     <section class="container" id="vueApp">
 
     <div class="row" style="min-height: 100px">
-        <div class="col-md-12">
-            <p>资源收集</p>
+        <div class="col-md-11 col-md-offset-1">
+            <h3>资源收集列表:书签、网站、Python库</h3>
         </div>
-        <div class="col-md-2 col-md-offset-10">
-{#            <div class="btn-group">#}
-{#                <a href="../admin/mining/resource/add/" class="btn btn-info">新增</a>#}
-                <button type='button' data-toggle="modal" class="btn btn-info" data-target="#new">新增</button>
-                <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                                    &times;
-                                </button>
-                                <h4 class="modal-title" id="myModalLabel">
-                                    新增资源
-                                </h4>
+        <div class="col-md-3 col-md-offset-9">
+            <button type='button' data-toggle="modal" class="btn btn-info" data-target="#new">新增</button>
+            <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                &times;
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">
+                                新增资源
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <form action="" class="form-horizontal" role="form">
+                                <div class="form-group">
+                                <label for="type" class="col-sm-2 control-label">
+                                    类型：
+                                </label>
+                                <div class="col-sm-10">
+                                    <select name="" class="form-control" id="type" v-model="resource.type_id">
+                                        {% for type in type_list %}
+                                            <option value="{{ type.id }}">{{ type.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <form action="" class="form-horizontal" role="form">
-                                    <div class="form-group">
-                                    <label for="type" class="col-sm-2 control-label">
-                                        类型：
+                                <div class="form-group">
+                                    <label for="name" class="col-sm-2 control-label">
+                                        名称:
                                     </label>
                                     <div class="col-sm-10">
-                                        <select name="" class="form-control" id="type" v-model="resource.type_id">
-                                            {% for type in type_list %}
-                                                <option value="{{ type.id }}">{{ type.name }}</option>
-                                            {% endfor %}
-                                        </select>
+                                        <input type="text" id="name" class="form-control" v-model="resource.name">
                                     </div>
                                 </div>
-                                    <div class="form-group">
-                                        <label for="name" class="col-sm-2 control-label">
-                                            名称:
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="name" class="form-control" v-model="resource.name">
-                                        </div>
+                                <div class="form-group">
+                                    <label for="intro" class="col-sm-2 control-label">
+                                        简介:
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="intro" class="form-control" v-model="resource.intro">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="intro" class="col-sm-2 control-label">
-                                            简介:
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="intro" class="form-control" v-model="resource.intro">
-                                        </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="link" class="col-sm-2 control-label">
+                                        链接:
+                                    </label>
+                                    <div class="col-sm-10">
+                                        <input type="text" id="link" class="form-control" v-model="resource.link">
                                     </div>
-                                    <div class="form-group">
-                                        <label for="link" class="col-sm-2 control-label">
-                                            链接:
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input type="text" id="link" class="form-control" v-model="resource.link">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
-                                <button type="button" class="btn btn-primary" @click="create">submit</button>
-                            </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">cancel</button>
+                            <button type="button" class="btn btn-primary" @click="create">submit</button>
                         </div>
                     </div>
                 </div>
-{#            </div>#}
+            </div>
         </div>
     </div>
     <div class="row" style="font-size: 1.2em">
-        <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-11 col-md-offset-1">
             {% for type in type_list %}
         <h4 class="type_name">
             <a href="#{{ type.name }}" class="" style="color: lavender; text-decoration-line: none">
@@ -117,7 +114,6 @@
                     let that = this;
                     that.$http.post("{% url "mining:resource_create" %}",that.resource)
                         .then(res=>{
-                            console.log(res)
                             $("#new").modal("hide")
                         })
                 }

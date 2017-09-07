@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'nlp',  # 自然语言处理
     'mining',  # 数据挖掘
     'blog',  # blog
+    'api',
     # 'channels'
 ]
 

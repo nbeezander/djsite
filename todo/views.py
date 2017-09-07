@@ -59,3 +59,6 @@ def question(request):
 
 def keyboard(request):
     return  render(request, "todo/keyboard.html")
+
+def css(request):
+    return  render(request, "todo/css.html")
