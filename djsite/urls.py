@@ -25,8 +25,6 @@ def index(request):
 urlpatterns = [
     url(r'^$', index, name="index"),
     url(r'^admin/', admin.site.urls),
-    # url(r'^polls/', include('polls.urls', namespace="polls")),
-    url(r'^parse/', include('parse.urls', namespace="parse")),
     url(r'^spider/', include('spider.urls', namespace="spider")),
     url(r'^todo/', include('todo.urls', namespace="todo")),
     url(r'^nlp/', include('nlp.urls', namespace="nlp")),
