@@ -103,6 +103,11 @@ Array.prototype.ravel = function () {
     },[])
 };
 
+/*弄平。。。*/
+Array.prototype.flatten = function () {
+
+};
+
 /**
  * 从数组中选取指定数量的元素
  * num(int)    :  数量(default 1)
@@ -118,7 +123,7 @@ Array.prototype.choice = function (num=1,repeat=true,p=null) {
     index.forEach(function (x) {
         res.push(that[x])
     });
-    return [index,res]
+    return res;
 };
 
 /*判断数组中是否只包含数字*/
@@ -170,6 +175,31 @@ Array.prototype.remove = function (index) {
 /*删除指定元素 返回新数组*/
 Array.prototype.delete = function (item) {
     return this.filter(x=>x!==item)
+};
+
+/*在指定索引插入元素或者数组*/
+Array.prototype.insert = function (index,items) {
+    if(items instanceof  Array){
+        let that = this;
+        items.forEach(x=>{
+            that.splice(index,0,x);
+            index ++
+        })
+
+    }else{
+        this.splice(index,0,items)
+    }
+
+    return this
+};
+
+/*pop*/
+Array.prototype.pop2 = function (index) {
+  if (arguments.length){
+      return this.splice(index,1)[0];
+  }else{
+    return this.pop()
+  }
 };
 
 /*把两个数组压缩成对象格式，按索引对齐*/
@@ -235,4 +265,22 @@ Array.prototype.isNormal = function () {
 /*切片[s:e:t]*/
 Array.prototype.slice2 = function (start,end,step=1) {
     return this.slice(start,end).filter((x,y)=>y%step === 0)
+};
+
+/*检查数组中是否包含某个元素*/
+Array.prototype.contains = function (item) {
+    let b = true;
+    if(item instanceof Object){
+        item = JSON.stringify(item);
+        b = false;
+        // return this.some(x=>JSON.stringify(x) === temp)
+    }
+
+    return this.some(x=>(b?x:JSON.stringify(x))===item)
+};
+
+
+Array.prototype.equal = function (arr) {
+
+
 };

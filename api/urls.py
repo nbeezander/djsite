@@ -7,6 +7,7 @@ from django.conf.urls import url
 from . import views, api
 
 urlpatterns = [
-    url(r'^translate/$',api.Translation.as_view(), name='translate')
+    url(r'^translate/$',api.Translation.as_view(), name='translate'),
+    url(r'^translatev2/$',api.TranslationV2.as_view(), name='translatev2'),
 
 ]

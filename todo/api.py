@@ -31,7 +31,7 @@ class WordsViewSet(mixins.ListModelMixin,
             p_w.save()
         except Words.DoesNotExist:
             return self.create(request, *args, **kwargs)
-        return self.list(request, *args, **kwargs)
+        return self.update(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)

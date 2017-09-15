@@ -14,7 +14,7 @@ class Type(models.Model):
 class Resource(models.Model):
     # 资源类；用来收集与呈现
     name = models.CharField(max_length=32, verbose_name="名称")
-    intro = models.CharField(max_length=64, verbose_name="简介")
+    intro = models.CharField(max_length=128, verbose_name="简介")
     link = models.CharField(max_length=128, verbose_name="链接")
     doc = models.TextField(max_length=2048, verbose_name="文档", null=True, blank=True)
     note = models.CharField(max_length=2048, verbose_name="笔记", null=True, blank= True)

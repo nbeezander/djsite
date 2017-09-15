@@ -2,18 +2,23 @@
 
 {% block style %}
     <style>
-        a:link{
-            text-decoration-line: none;
-        }
-        a:visited{
-            text-decoration-line: none;
-        }
-        a:hover{
-            text-decoration-line: none;
-        }
-        a:active{
-            text-decoration-line: none;
-        }
+    .audio_play{
+        background: none;
+        border: none;
+        outline: none;
+    }
+    a:link{
+        text-decoration-line: none;
+    }
+    a:visited{
+        text-decoration-line: none;
+    }
+    a:hover{
+        text-decoration-line: none;
+    }
+    a:active{
+        text-decoration-line: none;
+    }
     .word:hover .inter{
         display: inline-block;
     }
@@ -62,7 +67,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary" v-on:click="add_words">确定</button>
+                                <button type="button" class="btn btn-primary" @click="add_words">确定</button>
                             </div>
                         </div>
                     </div>
@@ -86,7 +91,8 @@
                                 <div class="modal-body">
                                     <h5><span v-for="t in interpretation.translation">${ t };</span></h5>
                                     <h5 v-show="interpretation.basic">
-                                        美式读音： ${ interpretation.basic['us-phonetic'] }
+                                        美:[ ${ interpretation.basic?interpretation.basic['us-phonetic']:"" } ] <button type="button" class="audio_play" @click="audio_play"><i class="icon-volume-up"></i></button>
+                                        <audio id="audio" controls="" style="display:none" name="media" :src="'http://dict.youdao.com/dictvoice?audio='+interpretation.query"></audio>
                                     </h5>
                                     <ul v-show="interpretation.basic">
                                         <li v-for=" ex in interpretation.basic.explains">${ex}</li>
@@ -140,7 +146,7 @@ function init() {
     }
     let th = localStorage.getItem("health");
     if(th){
-        health = th;
+        health = parseInt(th);
     }else{
         localStorage.setItem("health",100);
     }
@@ -156,7 +162,7 @@ let app = new Vue({
         coin:coin,
         word:"",
         word_cost:5,
-        health:100,
+        health:health,
         arena:"",
         interpretation:{
             query:"",
@@ -179,7 +185,8 @@ let app = new Vue({
 
             that.$http.post("{% url "todo:api_words" %}", {word:that.word})
                 .then(res=>{
-                    that.random();
+                    that.arena=res.body;
+                    that.getInterpretation();
                     });
 
             that.coin -= that.word_cost;
@@ -227,6 +234,10 @@ let app = new Vue({
         },
         clearInterpretation:function () {
             this.interpretation = ""
+        },
+        audio_play:function () {
+            let node = $("#audio")[0];
+            node.play()
         }
     },
     computed:{
